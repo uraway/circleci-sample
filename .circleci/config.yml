@@ -27,7 +27,7 @@ jobs:
           when: on_fail
           command: |
             export REVIEWDOG_GITHUB_API_TOKEN=${<< parameters.reviewdog-github-api-token >>}
-            $(npm bin)/textlint -f checkstyle README.md | ./bin/reviewdog -f=checkstyle -name="textlint" -reporter="github-pr-review"
+            cat .textlint.log | ./bin/reviewdog -f=checkstyle -name="textlint" -reporter="github-pr-review"
 
 workflows:
   version: 2
