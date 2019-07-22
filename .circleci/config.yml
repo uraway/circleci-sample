@@ -16,17 +16,17 @@ jobs:
           name: "依存モジュールをインストールする"
           command: npm install
       - run:
-          name: "textlintをREADME.mdに対して実行する"
-          command: $(npm bin)/textlint -f checkstyle README.md >> .textling.log
-      - run:
           name: "reviewdogをインストールする"
           command: |
             curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s  v$REVIEWDOG_VERSION
       - run:
+          name: "textlintをREADME.mdに対して実行する"
+          command: $(npm bin)/textlint -f checkstyle README.md >> .textling.log
+      - run:
           name: "reviewdogを実行する"
           when: on_fail
           command: |
-            cat check_result .textlint.log | ./bin/reviewdog -f=checkstyle -name="textlint" -reporter="github-pr-check"
+            cat .textlint.log | ./bin/reviewdog -f=checkstyle -name="textlint" -reporter="github-pr-check"
 
 workflows:
   version: 2
