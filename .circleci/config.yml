@@ -7,7 +7,7 @@ jobs:
     environment:
       REVIEWDOG_VERSION: 0.9.12
     parameters:
-      REVIEWDOG_GITHUB_API_TOKEN:
+      reviewdog-github-api-token:
         type: env_var_name
         default: REVIEWDOG_GITHUB_API_TOKEN
     steps:
@@ -26,6 +26,7 @@ jobs:
           name: "reviewdogを実行する"
           when: on_fail
           command: |
+            export REVIEWDOG_GITHUB_API_TOKEN=<< parameters.reviewdog-github-api-token >>
             cat .textlint.log | ./bin/reviewdog -f=checkstyle -name=textlint -reporter=github-pr-review
 
 workflows:
@@ -33,4 +34,4 @@ workflows:
   proofreading:
     jobs:
       - proofreading_job:
-          REVIEWDOG_GITHUB_API_TOKEN: GITHUB_API_TOKEN
+          reviewdog-github-api-token: GITHUB_TOKEN
