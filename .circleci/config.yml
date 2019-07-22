@@ -26,7 +26,7 @@ jobs:
           name: "reviewdogを実行する"
           when: on_fail
           command: |
-            export REVIEWDOG_GITHUB_API_TOKEN=<< parameters.reviewdog-github-api-token >>
+            export REVIEWDOG_GITHUB_API_TOKEN=${<< parameters.reviewdog-github-api-token >>}
             cat .textlint.log | ./bin/reviewdog -f=checkstyle -name=textlint -reporter=github-pr-review
 
 workflows:
