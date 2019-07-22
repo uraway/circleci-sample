@@ -1,0 +1,31 @@
+version: 2.1
+
+jobs:
+  npm_publish_job:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: "依存モジュールをインストールする"
+          command: npm install
+      - run:
+          name: "モジュールをビルドする"
+          command: npm build
+      - run:
+          name: "NPMトークンを設定する"
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run:
+          name: "npmパッケージとして公開する"
+          command: npm publish
+
+workflows:
+  version: 2
+  npm_publish:
+    jobs:
+      - npm_publish_job:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
