@@ -1,31 +1,18 @@
 version: 2.1
+description: # The purpose of this orb
+
+orbs:
+  cli: circleci/circleci-cli@0.1.5
 
 jobs:
-  npm_publish_job:
-    docker:
-      - image: circleci/node
-    steps:
-      - checkout
-      - run:
-          name: "依存モジュールをインストールする"
-          command: npm install
-      - run:
-          name: "モジュールをビルドする"
-          command: npm build
-      - run:
-          name: "NPMトークンを設定する"
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run:
-          name: "npmパッケージとして公開する"
-          command: npm publish
+    test:
+      executor: cli/default
+      steps:
+        - cli/install
+        - checkout
+        - run: circleci orb validate ./src/orb.yml
 
 workflows:
-  version: 2
-  npm_publish:
+  main:
     jobs:
-      - npm_publish_job:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+      - test
