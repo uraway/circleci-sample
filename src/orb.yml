@@ -1,7 +1,16 @@
 version: 2.1
 
-steps:
-  - run:
-      name: "Hello World"
-      command: |
-        echo "Hello World"
+executors:
+  default:
+    parameters:
+      tag:
+        type: string
+        default: "curl-browsers"
+    docker:
+      - image: circleci/buildpack-deps:<< parameters.tag >>
+
+jobs:
+  hello-build:
+    executor: default
+    steps:
+      - run: echo "Hello, build!"

@@ -1,18 +1,10 @@
 version: 2.1
-description: # The purpose of this orb
 
 orbs:
-  cli: circleci/circleci-cli@0.1.5
-
-jobs:
-    test:
-      executor: cli/default
-      steps:
-        - cli/install
-        - checkout
-        - run: circleci orb validate ./src/orb.yml
+  hello: namespace/orb@dev:0.0.1
 
 workflows:
-  main:
+  hello-workflow:
     jobs:
-      - test
+      - hello/hello-build:
+          tag: testing-browsers
