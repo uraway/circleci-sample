@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hello: namespace/orb@dev:0.0.1
+  hello: uraway/hello-build@dev:0.0.1
 
 workflows:
   hello-workflow:
