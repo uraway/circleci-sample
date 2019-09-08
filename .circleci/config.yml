@@ -9,11 +9,8 @@ jobs:
       steps:
         - cli/install
         - checkout
-        - run: mkdir -p tmp-config-src
-        - run: cp .circleci/test.yml config.yml
-        - run:
-            command: circleci local execute -c config.yml | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
-            name: run test job locally
+        - run: circleci config process .circleci/test.yml >> .circleci/2.0.yml
+        - run: circleci local execute -c .circleci/2.0.yml | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
 
 workflows:
   main:
