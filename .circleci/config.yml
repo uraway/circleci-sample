@@ -9,6 +9,7 @@ jobs:
       steps:
         - cli/install
         - checkout
+        - setup_remote_docker
         - run:
             name: Expantion
             command: |
