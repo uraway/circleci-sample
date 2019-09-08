@@ -16,9 +16,11 @@ jobs:
               sudo apt-get install jq python-pip python-dev && \
               sudo pip install yq
         - run: |
-            result=$(circleci config process .circleci/test.yml | yq '.jobs."hello/hello-build".docker[0].image')
-            test $result = '"circleci/buildpack-deps:latest"'
-            echo $?
+            name: Test
+            command: |
+              result=$(circleci config process .circleci/test.yml | yq '.jobs."hello/hello-build".docker[0].image')
+              test $result = '"circleci/buildpack-deps:testing-browser"'
+              echo $?
 
 workflows:
   main:
