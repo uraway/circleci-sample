@@ -5,7 +5,7 @@ orbs:
 
 jobs:
     test:
-      executor: cli/default
+      machine: true
       steps:
         - cli/install
         - checkout
@@ -13,7 +13,6 @@ jobs:
             name: Expantion
             command: |
               circleci config process .circleci/test.yml > .circleci/config.yml
-        - setup_remote_docker
         - run: |
             name: Test
             command: |
