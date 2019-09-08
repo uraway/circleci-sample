@@ -12,10 +12,7 @@ jobs:
         - run:
             name: Install yq
             command: |
-                sudo apt install jq software-properties-common && \
-                sudo add-apt-repository ppa:rmescandon/yq -y && \
-                sudo apt update && \
-                sudo apt install yq -y
+                go get gopkg.in/mikefarah/yq.v2
         - run: |
             result=$(circleci config process .circleci/test.yml | yq '.jobs."hello/hello-build".docker[0].image')
             test $result = '"circleci/buildpack-deps:latest"'
