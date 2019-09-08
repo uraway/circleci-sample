@@ -1,10 +1,21 @@
 version: 2.1
 
 orbs:
-  hello: uraway/hello-build@dev:0.0.1
+  cli: circleci/circleci-cli@0.1.5
+
+jobs:
+    test:
+      executor: cli/default
+      steps:
+        - cli/install
+        - checkout
+        - run: |
+            result=$(circleci config process .circleci/test.yml | yq '.jobs."hello/hello-build".docker[0].image')
+            test $result = '"circleci/buildpack-deps:latest"'
+            echo $?
 
 workflows:
-  hello-workflow:
+  main:
     jobs:
-      - hello/hello-build:
-          tag: testing-browsers
+      - test
+

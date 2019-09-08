@@ -1,0 +1,12 @@
+version: 2.1
+
+orbs:
+  hello: uraway/hello-build@dev:0.0.1
+
+workflows:
+  hello-workflow:
+    jobs:
+      - hello/hello-build:
+          e:
+            name: hello/default
+            tag: latest
