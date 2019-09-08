@@ -5,14 +5,14 @@ orbs:
 
 jobs:
     test:
-      executor: cli/default
+      docker:
+        - image: python
       steps:
         - cli/install
         - checkout
-        - run:
-            name: Install yq
-            command: |
-                go get gopkg.in/mikefarah/yq.v2
+        - run: |
+            sudo apt-get install jq
+            pip install yq
         - run: |
             result=$(circleci config process .circleci/test.yml | yq '.jobs."hello/hello-build".docker[0].image')
             test $result = '"circleci/buildpack-deps:latest"'
