@@ -12,7 +12,7 @@ jobs:
         - run:
             name: Install yq
             command: |
-                sudo apt install software-properties-common && \
+                sudo apt install jq software-properties-common && \
                 sudo add-apt-repository ppa:rmescandon/yq -y && \
                 sudo apt update && \
                 sudo apt install yq -y
