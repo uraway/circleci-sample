@@ -10,17 +10,13 @@ jobs:
         - cli/install
         - checkout
         - run:
-            name: Install yq
+            name: Expantion
             command: |
-              sudo apt update && \
-              sudo apt-get install jq python-pip python-dev && \
-              sudo pip install yq
+              circleci config process .circleci/test.yml >> .circleci/2.0.yml
         - run: |
             name: Test
             command: |
-              result=$(circleci config process .circleci/test.yml | yq '.jobs."hello/hello-build".docker[0].image')
-              test $result = '"circleci/buildpack-deps:testing-browser"'
-              echo $?
+              circleci local execute --config .circleci/2.0.yml --job hello/hello-build
 
 workflows:
   main:
