@@ -5,19 +5,18 @@ orbs:
 
 jobs:
     test:
-      executor: cli/default
+      executor: cli/machine
       steps:
         - cli/install
         - checkout
-        - setup_remote_docker
         - run:
             name: Expantion
             command: |
-              circleci config process .circleci/test.yml > .circleci/config.yml
+              circleci config process .circleci/test.yml > .circleci/2.0.yml
         - run: |
             name: Test
             command: |
-              circleci local execute --job hello/hello-build
+              circleci local execute --config .circleci/2.0.yml --job hello/hello-build
 
 workflows:
   main:
