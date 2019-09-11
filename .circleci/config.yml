@@ -1,19 +1,22 @@
-version: 2.1
-
 orbs:
-  cli: circleci/circleci-cli@0.1.5
+  orb-tools: circleci/orb-tools@8.27.4
 
-jobs:
-    test:
-      machine: true
-      steps:
-        - cli/install
-        - checkout
-        - run: circleci config process .circleci/test.yml >> .circleci/2.0.yml
-        - run: circleci local execute --config .circleci/2.0.yml --job hello/hello-build | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
-
+version: 2.1
 workflows:
-  main:
+  publish-orb:
     jobs:
-      - test
-
+      - orb-tools/publish-dev:
+          name: publish-orb-dev
+          filters:
+            branches:
+              only: develop
+          orb-path: ./src/orb.yml
+          orb-name: your-namespace/your-orb
+          validate: true
+      - orb-tools/trigger-integration-workflow:
+          filters:
+            branches:
+              only: develop
+          requires:
+            - publish-orb-dev
+          ssh-fingerprints: "SO:ME:FIN:G:ER:PR:IN:T"
