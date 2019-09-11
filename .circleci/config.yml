@@ -18,3 +18,4 @@ workflows:
           filters:
             branches:
               only: master
+          tag: master
