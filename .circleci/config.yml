@@ -7,9 +7,6 @@ workflows:
     jobs:
       - orb-tools/publish-dev:
           name: publish-orb-dev
-          filters:
-            branches:
-              ignore: master
           orb-path: ./src/orb.yml
           orb-name: uraway/hello-build
           checkout: true
