@@ -12,6 +12,7 @@ workflows:
               ignore: master
           orb-path: ./src/orb.yml
           orb-name: your-namespace/your-orb
+          checkout: true
           validate: true
       - orb-tools/trigger-integration-workflow:
           filters:
