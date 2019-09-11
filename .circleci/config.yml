@@ -1,0 +1,22 @@
+orbs:
+  orb-tools: circleci/orb-tools@8.27.4
+
+version: 2.1
+workflows:
+  publish-orb:
+    jobs:
+      - orb-tools/publish-dev:
+          name: publish-orb-dev
+          filters:
+            branches:
+              only: develop
+          orb-path: ./src/orb.yml
+          orb-name: your-namespace/your-orb
+          validate: true
+      - orb-tools/trigger-integration-workflow:
+          filters:
+            branches:
+              only: develop
+          requires:
+            - publish-orb-dev
+          ssh-fingerprints: "SO:ME:FIN:G:ER:PR:IN:T"
