@@ -15,6 +15,5 @@ workflows:
           filters:
             branches:
               only: master
-          requires:
-            - orb-tools/publish-dev
+          requires: [publish-orb-dev]
           tag: master
