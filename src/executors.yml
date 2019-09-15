@@ -1,8 +1,0 @@
-executors:
-  default:
-    parameters:
-      tag:
-        type: string
-        default: "latest"
-    docker:
-      - image: circleci/buildpack-deps:<< parameters.tag >>

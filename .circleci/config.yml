@@ -5,15 +5,7 @@ version: 2.1
 workflows:
   publish-orb:
     jobs:
-      - orb-tools/pack
-      - orb-tools/publish-dev:
-          requires: [orb-tools/pack]
-          orb-name: uraway/hello-build
-          checkout: true
-          validate: true
-      - orb-tools/trigger-integration-workflow:
-          filters:
-            branches:
-              only: master
-          requires: [orb-tools/publish-dev]
-          tag: master
+      - orb-tools/lint
+      - orb-tools/pack:
+          requires:
+            - orb-tools/lint
