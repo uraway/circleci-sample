@@ -1,5 +1,3 @@
-version: 2.1
-
 executors:
   default:
     parameters:
@@ -8,12 +6,3 @@ executors:
         default: "latest"
     docker:
       - image: circleci/buildpack-deps:<< parameters.tag >>
-
-jobs:
-  hello-build:
-    parameters:
-      e:
-        type: executor
-    executor: << parameters.e >>
-    steps:
-      - run: echo "Hello, build!"

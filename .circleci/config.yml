@@ -5,9 +5,10 @@ version: 2.1
 workflows:
   publish-orb:
     jobs:
+      - orb-tools/pack
       - orb-tools/publish-dev:
+          requires: [orb-tools/pack]
           name: publish-orb-dev
-          orb-path: ./src/orb.yml
           orb-name: uraway/hello-build
           checkout: true
           validate: true
@@ -16,4 +17,3 @@ workflows:
             branches:
               only: master
           requires: [publish-orb-dev]
-          tag: master
