@@ -8,7 +8,6 @@ workflows:
       - orb-tools/pack
       - orb-tools/publish-dev:
           requires: [orb-tools/pack]
-          name: publish-orb-dev
           orb-name: uraway/hello-build
           checkout: true
           validate: true
@@ -17,3 +16,4 @@ workflows:
             branches:
               only: master
           requires: [publish-orb-dev]
+          tag: master
