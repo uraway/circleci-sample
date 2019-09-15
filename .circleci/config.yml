@@ -11,7 +11,7 @@ workflows:
               ignore: /.*/
             tags:
               only: /master-patch.*/
-          orb-name: your-namespace/your-orb
+          orb-name: uraway/hello-build
           release: patch
       - orb-tools/dev-promote-prod:
           filters:
@@ -19,7 +19,7 @@ workflows:
               ignore: /.*/
             tags:
               only: /master-minor.*/
-          orb-name: your-namespace/your-orb
+          orb-name: uraway/hello-build
           release: minor
       - orb-tools/dev-promote-prod:
           filters:
@@ -27,7 +27,7 @@ workflows:
               ignore: /.*/
             tags:
               only: /master-major.*/
-          orb-name: your-namespace/your-orb
+          orb-name: uraway/hello-build
           release: major
   publish-dev:
     jobs:
