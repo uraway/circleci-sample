@@ -3,9 +3,43 @@ orbs:
 
 version: 2.1
 workflows:
-  publish-orb:
+  promote-orb:
     jobs:
-      - orb-tools/lint
-      - orb-tools/pack:
-          requires:
-            - orb-tools/lint
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-patch.*/
+          orb-name: your-namespace/your-orb
+          release: patch
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-minor.*/
+          orb-name: your-namespace/your-orb
+          release: minor
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-major.*/
+          orb-name: your-namespace/your-orb
+          release: major
+  publish-dev:
+    jobs:
+      - orb-tools/pack
+      - orb-tools/publish-dev:
+          requires: [orb-tools/pack]
+          orb-name: uraway/hello-build
+          checkout: true
+          validate: true
+      - orb-tools/trigger-integration-workflow:
+          filters:
+            branches:
+              only: master
+          requires: [orb-tools/publish-dev]
+          tag: master
