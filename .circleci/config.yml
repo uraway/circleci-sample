@@ -1,45 +1,44 @@
-orbs:
-  orb-tools: circleci/orb-tools@8.27.4
-
 version: 2.1
+
+jobs:
+  audit_job:
+    docker:
+        - image: circleci/node
+    steps:
+      - checkout
+      - run: # ・・・ 1
+          name: "npm audit結果を.npm_audit.logファイルに格納する"
+          command: |
+            set +e
+            npm audit --parseable | awk -F $'\t' '{print $4}' >> .npm_audit.log
+
+            if [ "$?" -eq 0 ]; then
+              echo "脆弱性のある依存パッケージなし"
+              circleci step halt
+            fi
+      - run: # ・・・ 2
+          name: "GitHub Issueに投げる"
+          command: |
+            body=`cat .npm_audit.log | sed 's/$/<br>/'`
+
+            curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
+                https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues \
+                -d @- \<< EOF
+                {
+                    "title": "npm audit",
+                    "body" : "${body}"
+                }
+            EOF
 workflows:
-  promote-orb:
+  version: 2
+  audit:
+    # Disable scheduled execution
+    # triggers:
+    #   - schedule:
+    #       cron: "0 0 * * *"
+    #       filters:
+    #         branches:
+    #           only:
+    #             - master
     jobs:
-      - orb-tools/dev-promote-prod:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-patch.*/
-          orb-name: uraway/hello-build
-          release: patch
-      - orb-tools/dev-promote-prod:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-minor.*/
-          orb-name: uraway/hello-build
-          release: minor
-      - orb-tools/dev-promote-prod:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-major.*/
-          orb-name: uraway/hello-build
-          release: major
-  publish-dev:
-    jobs:
-      - orb-tools/pack
-      - orb-tools/publish-dev:
-          requires: [orb-tools/pack]
-          orb-name: uraway/hello-build
-          checkout: true
-          validate: true
-      - orb-tools/trigger-integration-workflow:
-          filters:
-            branches:
-              only: master
-          requires: [orb-tools/publish-dev]
-          tag: master
+      - audit_job
