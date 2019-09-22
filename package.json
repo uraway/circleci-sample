@@ -15,5 +15,9 @@
     "bugs": {
         "url": "https://github.com/uraway/circleci-sample/issues"
     },
-    "homepage": "https://github.com/uraway/circleci-sample#readme"
+    "homepage": "https://github.com/uraway/circleci-sample#readme",
+    "devDependencies": {
+        "textlint": "^11.3.1",
+        "textlint-rule-no-mix-dearu-desumasu": "^4.0.0"
+    }
 }
