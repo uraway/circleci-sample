@@ -1,22 +1,32 @@
-orbs:
-  orb-tools: circleci/orb-tools@8.27.4
 
 version: 2.1
+
+jobs:
+  npm_publish_job:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: "依存モジュールをインストールする"
+          command: npm install
+      - run:
+          name: "モジュールをビルドする"
+          command: npm build
+      - run:
+          name: "NPMトークンを設定する"
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run:
+          name: "npmパッケージとして公開する"
+          command: npm publish
+
 workflows:
-  publish-orb:
+  version: 2
+  npm_publish:
     jobs:
-      - orb-tools/publish-dev:
-          name: publish-orb-dev
+      - npm_publish_job:
           filters:
+            tags:
+              only: /^v.*/
             branches:
-              only: develop
-          orb-path: ./src/orb.yml
-          orb-name: your-namespace/your-orb
-          validate: true
-      - orb-tools/trigger-integration-workflow:
-          filters:
-            branches:
-              only: develop
-          requires:
-            - publish-orb-dev
-          ssh-fingerprints: "SO:ME:FIN:G:ER:PR:IN:T"
+              ignore: /.*/
