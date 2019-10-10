@@ -69,8 +69,8 @@ jobs:
           path: ./reports/eslint/eslint.xml
 
       - store_artifacts:
-          path: ./coverage/lcov.info
-          prefix: tests
+          path: ./coverage
+          prefix: coverage
 
   build:
     <<: *defaults
