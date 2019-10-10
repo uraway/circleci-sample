@@ -51,13 +51,13 @@ jobs:
 
       - run:
           name: Test code
-          command: $(npm bin)/nyc $(npm bin)/mocha ./test/*.test.ts --require ts-node/register --reporter mocha-junit-reporter
+          command: $(npm bin)/nyc --silent $(npm bin)/mocha ./test/*.test.ts --require ts-node/register --reporter mocha-junit-reporter
           environment:
               MOCHA_FILE: ./reports/mocha/test-results.xml
 
       - run:
           name: Code Coverage
-          command: $(npm bin)/nyc report --reporter=text-lcov
+          command: $(npm bin)/nyc report --reporter=lcov
 
       - store_test_results:
           path: ./reports
