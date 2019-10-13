@@ -11,5 +11,7 @@ services:
       - .:/sample-app
     ports:
       - "3000:3000"
+    environment:
+      PGHOST: db
     depends_on:
       - db
