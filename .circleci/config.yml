@@ -35,16 +35,15 @@ jobs:
 
       - restore_cache:
           keys:
-            - rails-yarn-v1-{{ checksum "yarn.lock" }}
-            - rails-yarn-v1-
+            - rails-yarn-v2-{{ checksum "yarn.lock" }}
+            - rails-yarn-v2-
 
-      - run: yarn cache dir
       - run:
           name: Yarn Install
-          command: yarn install --cache-folder ~/.cache/yarn
+          command: yarn install
 
       - save_cache:
-          key: rails-yarn-v1-{{ checksum "yarn.lock" }}
+          key: rails-yarn-v2-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
