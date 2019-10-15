@@ -52,7 +52,7 @@ jobs:
       #    command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
-          name: Waiting for postgres to be ready
+          name: Waiting for DB to be ready
           command: |
             for i in `seq 1 10`;
             do
@@ -60,7 +60,7 @@ jobs:
               echo -n .
               sleep 1
             done
-            echo Failed waiting for postgres && exit 1
+            echo Failed waiting for DB && exit 1
 
       - run:
           name: Database setup
@@ -69,10 +69,8 @@ jobs:
       - run:
           name: Run rspec in parallel
           command: |
-            bundle exec rspec --profile 10 \
-                              --format RspecJunitFormatter \
+            bundle exec rspec --format RspecJunitFormatter \
                               --out test_results/rspec.xml \
-                              --format progress \
                               $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
 
       - store_test_results:
