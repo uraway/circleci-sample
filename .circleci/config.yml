@@ -19,9 +19,14 @@ jobs:
     steps:
       - checkout
 
-      - run: curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-      - run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.19.1
+      - run:
+          environment:
+              NODE_VERSION: 11.10.0
+              YARN_VERSION: 1.19.1
+          command: curl -sSL "https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-${ARCH}.tar.xz" | sudo tar --strip-components=2 -xJ -C /usr/local/bin/ node-${NODE_VERSION}-linux-${ARCH}/bin/node
+      - run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version ${YARN_VERSION}
       - run: node -v
+      - run: yarn -v
 
       - restore_cache:
           keys:
