@@ -19,6 +19,10 @@ jobs:
     steps:
       - checkout
 
+      - run: curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+      - run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.19.1
+      - run: node -v
+
       - restore_cache:
           keys:
             - rails-bundle-v1-{{ checksum "Gemfile.lock" }}
