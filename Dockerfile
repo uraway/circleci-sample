@@ -1,10 +1,10 @@
-FROM ruby:2.6.3
+FROM ruby:2.6.5
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client yarn
 RUN mkdir /sample-app
 WORKDIR /sample-app
 COPY Gemfile /sample-app/Gemfile
 COPY Gemfile.lock /sample-app/Gemfile.lock
-RUN bundle install
+RUN bundle install --path vendor/bundle
 COPY . /sample-app
 
 # Add a script to be executed every time the container starts.
