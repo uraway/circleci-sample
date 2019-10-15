@@ -23,12 +23,14 @@ jobs:
           name: Install Node
           environment:
               NODE_VERSION: 11.10.0
-          command: curl -sSL "https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz" | sudo tar --strip-components=2 -xJ -C /usr/local/bin/ node-${NODE_VERSION}-linux-x64/bin/node
+          command: |
+            curl -sSL "https://nodejs.org/dist/v11.10.0/node-v11.10.0-linux-x64.tar.xz" | sudo tar --strip-components=2 -xJ -C /usr/local/bin/ node-v11.10.0-linux-x64/bin/node
       - run:
           name: Install Yarn
           environment:
               YARN_VERSION: 1.19.1
-          command: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version ${YARN_VERSION}
+          command: |
+            curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version ${YARN_VERSION}
       - run: node -v
       - run: yarn -v
 
