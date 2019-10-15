@@ -4,7 +4,7 @@ RUN mkdir /sample-app
 WORKDIR /sample-app
 COPY Gemfile /sample-app/Gemfile
 COPY Gemfile.lock /sample-app/Gemfile.lock
-RUN bundle install --path vendor/bundle
+RUN bundle install
 COPY . /sample-app
 
 # Add a script to be executed every time the container starts.
