@@ -3,6 +3,7 @@ services:
   app:
     volumes:
       - "./src:/sample-app"
+    working_dir: /sample-app
     command: "php artisan serve --host=0.0.0.0 --port=8000"
     ports:
       - 8000:8000
@@ -17,6 +18,4 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - "db:/var/lib/mysql/data"
-volumes:
-  db:
+      - ./db:/var/lib/mysql
