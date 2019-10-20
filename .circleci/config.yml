@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build_sample:
+  build:
     working_directory: ~/project/src
     docker:
       - image: circleci/php:7.3.10-stretch-node-browsers
@@ -18,6 +18,7 @@ jobs:
       - checkout:
           path: ~/project
 
+      - run: chown -R $USER:$USER ~/project/src
       # Download and cache dependencies
 
       # composer cache
