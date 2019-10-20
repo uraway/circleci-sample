@@ -18,17 +18,16 @@ jobs:
       - checkout:
           path: ~/project
 
+      - run: docker-php-ext-install pdo_mysql
+
       - run: chown -R $USER:$USER ~/project/src
       # Download and cache dependencies
 
       # composer cache
       - restore_cache:
           keys:
-          # "composer.json" can be used if "composer.json"
-          # is not committed to the repository.
-          - v1-dependencies-{{ checksum "composer.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - composer-v1-{{ checksum "composer.lock" }}
+            - composer-v1-
 
       - run: composer install -n --prefer-dist
 
@@ -36,8 +35,6 @@ jobs:
           key: composer-v1-{{ checksum "composer.lock" }}
           paths:
             - vendor
-
-      # node cache
 
       - restore_cache:
           keys:
@@ -49,7 +46,6 @@ jobs:
           paths:
             - node_modules
 
-      # prepare the database
       - run: php artisan migrate --env=testing --force
 
       # run tests with phpunit or codecept
