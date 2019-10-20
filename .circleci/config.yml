@@ -15,6 +15,7 @@ jobs:
       # - image: redis:3
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_DATABASE: forge
 
     steps:
       - checkout:
