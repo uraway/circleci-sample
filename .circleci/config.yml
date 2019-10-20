@@ -43,7 +43,7 @@ jobs:
           paths:
             - node_modules
 
-      - run: php artisan key:generate
+      - run: mv .env.circleci .env
 
       - run: php artisan migrate --env=testing --force
 
