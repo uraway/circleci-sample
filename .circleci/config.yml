@@ -6,8 +6,9 @@ jobs:
       - image: circleci/php:7.3.10-stretch-node-browsers
       - image: circleci/mysql:5.7
         environment:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_USER: forge
           MYSQL_DATABASE: forge
+          MYSQL_PASSWORD: ''
 
     steps:
       - checkout:
