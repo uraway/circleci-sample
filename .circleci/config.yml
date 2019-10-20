@@ -43,6 +43,8 @@ jobs:
           paths:
             - node_modules
 
+      - run: php artisan key:generate
+
       - run: php artisan migrate --env=testing --force
 
       - run: mkdir -p test_results
