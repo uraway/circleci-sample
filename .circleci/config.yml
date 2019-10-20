@@ -18,7 +18,7 @@ jobs:
       - checkout:
           path: ~/project
 
-      - run: docker-php-ext-install pdo_mysql
+      - run: sudo docker-php-ext-install pdo_mysql
 
       - run: chown -R $USER:$USER ~/project/src
       # Download and cache dependencies
@@ -40,7 +40,9 @@ jobs:
           keys:
             - node-v4-{{ checksum "package.json" }}
             - node-v4-
+
       - run: npm install
+
       - save_cache:
           key: node-v4-{{ checksum "package.json" }}
           paths:
