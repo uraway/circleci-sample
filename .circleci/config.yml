@@ -51,7 +51,7 @@ jobs:
 
       - run: ./vendor/bin/phpunit --testdox-xml test_results/phpunit/result.xml
 
-      - run: ./vendor/bin/phpcs --standard=phpcs.xml --report=junit test_results/php_codesniffer/result.xml ./
+      - run: ./vendor/bin/phpcs --standard=phpcs.xml --report-junit=test_results/php_codesniffer/result.xml ./
 
       - store_test_results:
           path: test_results
