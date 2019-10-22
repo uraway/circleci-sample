@@ -49,7 +49,7 @@ jobs:
 
       - run: mkdir -p test_results
 
-      - run: ./vendor/bin/phpunit --testdox-xml test_results/phpunit/result.xml --coverage-clover=coverage.html
+      - run: ./vendor/bin/phpunit --testdox-xml test_results/phpunit/result.xml --coverage-html=coverage
 
       # - run: ./vendor/bin/phpcs --standard=phpcs.xml --report-junit=test_results/php_codesniffer/result.xml ./
 
@@ -60,4 +60,4 @@ jobs:
           path: test_results
 
       - store_artifacts:
-          path: coverage.html
+          path: coverage
