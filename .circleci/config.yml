@@ -20,7 +20,8 @@ jobs:
       - checkout
 
       - setup_remote_docker:
-          docker_layer_caching: true
+          # docker_layer_caching: true
+          version: 19.03.4
 
       - run: docker build -t myapp:$CIRCLE_BRANCH .
 
