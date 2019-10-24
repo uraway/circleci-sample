@@ -20,27 +20,18 @@ jobs:
 
       - setup_remote_docker
 
-      - restore_cache:
-          keys:
-            - rails-bundle-v1-{{ checksum "Gemfile.lock" }}
-            - rails-bundle-v1-
-
-      - run: bundle install
+      - run: |
+          set +o pipefail
+          docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
 
       - run: |
-          CONTAINER_NAME=sample-container
+          docker build --cache-from=${CIRCLE_PROJECT_REPONAME} -t ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH} .
 
-          docker build -t myapp:$CIRCLE_BRANCH .
-          docker run --name $CONTAINER_NAME -d -p 80:80 myapp:$CIRCLE_BRANCH
-          docker exec -it $CONTAINER_NAME ls
+      - run: |
+          mkdir -p ~/caches
+          docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar sms-api
 
-          docker cp ./ $CONTAINER_NAME:circleci-sample/
-          docker exec -it $CONTAINER_NAME ls
 
-      - save_cache:
-          key: rails-bundle-v1-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
 
 
 workflows:
