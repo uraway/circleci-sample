@@ -20,6 +20,10 @@ jobs:
 
       - setup_remote_docker
 
+      - restore_cache:
+          keys:
+            - v2-image-{{ .Branch }}
+
       - run: |
           set +o pipefail
           docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
@@ -28,14 +32,17 @@ jobs:
           docker build --cache-from=${CIRCLE_PROJECT_REPONAME} -t ${CIRCLE_PROJECT_REPONAME}:latest .
 
       - run: |
-          docker-composee up -d
+          docker-compose up -d
           phantomjs screenshot.js
 
       - run: |
           mkdir -p ~/caches
           docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
 
-
+      - save_cache:
+          key: v2-image-{{ .Branch }}
+          paths:
+            - ~/caches
 
 
 workflows:
