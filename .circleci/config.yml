@@ -10,6 +10,7 @@ jobs:
       - restore_cache:
           keys:
             - v2-image-{{ .Branch }}
+            - v2-image-
 
       - run: |
           set +o pipefail
