@@ -7,8 +7,6 @@ jobs:
 
       - run: sudo curl --output /usr/local/bin/phantomjs https://s3.amazonaws.com/circle-downloads/phantomjs-2.1.1
 
-      - setup_remote_docker
-
       - restore_cache:
           keys:
             - v2-image-{{ .Branch }}
