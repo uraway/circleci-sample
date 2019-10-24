@@ -28,11 +28,14 @@ jobs:
       - run: bundle install
 
       - run: |
-          CACHE_CONTAINER=bundle-cache
-          CACHE_PATH=vendor/bundle
-          docker container create --name $CACHE_CONTAINER -v $CACHE_PATH alpine:3.4
-          docker cp $CACHE_PATH $CACHE_CONTAINER:/$CACHE_PATH
-          docker run --volumes-from $CACHE_PATH myapp:$CIRCLE_BRANCH bundle check || bundle install
+          CONTAINER_NAME=sample-container
+
+          docker build -t myapp:$CIRCLE_BRANCH .
+          docker run --name $CONTAINER_NAME -d -p 80:80 myapp:$CIRCLE_BRANCH
+          docker exec -it $CONTAINER_NAME ls
+
+          docker cp ./ $CONTAINER_NAME:circleci-sample/
+          docker exec -it $CONTAINER_NAME ls
 
       - save_cache:
           key: rails-bundle-v1-{{ checksum "Gemfile.lock" }}
