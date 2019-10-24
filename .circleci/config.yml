@@ -23,6 +23,9 @@ jobs:
           docker-compose up -d
           phantomjs screenshot.js
 
+      - store_artifacts:
+            path: ./screenshot.png
+
       - run: |
           mkdir -p ~/caches
           docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
