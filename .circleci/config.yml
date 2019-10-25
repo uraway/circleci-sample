@@ -14,7 +14,7 @@ jobs:
           docker login -u $DOCKER_USER -p $DOCKER_PASS
 
       - run: |
-          docker pull {$DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest
+          docker pull ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest
 
       - run: |
           docker build -t ${$DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest --cache-from ${$DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest .
