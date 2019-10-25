@@ -1,34 +1,33 @@
-version: 2.1
+version: 2
 jobs:
   build:
     machine: true
     steps:
-      - checkout
-
-      - run: |
-          docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-
-      - run: |
-          docker pull ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest
-
-      - run: |
-          docker build -t ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest --cache-from ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest .
-
-      - run: |
-          docker run ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest phantomjs screenshot.js
-
-      # - run: |
-      #     docker run -d -p 3000:3000 ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest
-      #     curl --retry 10 --retry-connrefused http://localhost:3000
-
-      - run: |
-          docker push ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest
-
-      - store_artifacts:
-            path: ./screenshot.png
-
+    - checkout
+    - restore_cache:
+        keys:
+          - v2-image-{{ .Branch }}
+          - v2-image-
+    - run: |
+          set +o pipefail
+          docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
+    - run: |
+          docker images
+    - run: |
+          docker build --cache-from=${CIRCLE_PROJECT_REPONAME} -t ${CIRCLE_PROJECT_REPONAME} .
+    - run: |
+          docker run ${CIRCLE_PROJECT_REPONAME} phantomjs screenshot.js
+    - store_artifacts:
+        path: ./screenshot.png
+    - run: |
+          mkdir -p ~/caches
+          docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
+    - save_cache:
+        key: v2-image-{{ .Branch }}-{{ epoch }}
+        paths:
+        - ~/caches/${CIRCLE_PROJECT_REPONAME}.tar
 workflows:
-    version: 2
-    main:
-      jobs:
-        - build
+  version: 2
+  main:
+    jobs:
+    - build
