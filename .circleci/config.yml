@@ -11,24 +11,19 @@ jobs:
             - v2-image-
 
       - run: |
-          set +o pipefail
-          docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
 
       - run: |
-          docker build -t ${CIRCLE_PROJECT_REPONAME}:latest .
+          docker pull ${$DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest
 
       - run: |
-          docker run ${CIRCLE_PROJECT_REPONAME}:latest ls
+          docker build -t ${$DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest --cache-from ${$DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest .
 
       - run: |
           docker run ${CIRCLE_PROJECT_REPONAME}:latest phantomjs screenshot.js
 
       - store_artifacts:
             path: ./screenshot.png
-
-      - run: |
-          mkdir -p ~/caches
-          docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
 
       - save_cache:
           key: v2-image-{{ .Branch }}
