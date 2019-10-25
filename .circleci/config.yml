@@ -20,7 +20,11 @@ jobs:
           docker build -t ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest --cache-from ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest .
 
       - run: |
-          docker run ${CIRCLE_PROJECT_REPONAME}:latest phantomjs screenshot.js
+          docker run ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest phantomjs screenshot.js
+
+      # - run: |
+      #     docker run -d -p 3000:3000 ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest
+      #     curl --retry 10 --retry-connrefused http://localhost:3000
 
       - run: |
           docker push ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}:latest
