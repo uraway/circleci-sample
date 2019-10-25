@@ -1,9 +1,11 @@
 version: 2
 jobs:
   build:
-    machine: true
+    docker:
+        - image: busybox
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: 環境変数REGISTORY_URLの設定
           command: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
@@ -13,7 +15,6 @@ jobs:
       - run:
           name: イメージのビルド
           command: docker build -t circleci-sample --cache-from ${REGISTORY_URL}:latest .
-
       - run:
           name: curl
           command: |
