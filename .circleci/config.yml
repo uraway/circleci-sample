@@ -5,11 +5,6 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - v2-image-{{ .Branch }}
-            - v2-image-
-
       - run: |
           docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
 
@@ -31,12 +26,6 @@ jobs:
 
       - store_artifacts:
             path: ./screenshot.png
-
-      - save_cache:
-          key: v2-image-{{ .Branch }}
-          paths:
-            - ~/caches
-
 
 workflows:
     version: 2
