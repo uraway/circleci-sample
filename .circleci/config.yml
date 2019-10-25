@@ -15,13 +15,13 @@ jobs:
           docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
 
       - run: |
-          docker build --cache-from=${CIRCLE_PROJECT_REPONAME} -t ${CIRCLE_PROJECT_REPONAME}:latest .
+          docker build -t ${CIRCLE_PROJECT_REPONAME}:latest .
 
       - run: |
-          docker run {CIRCLE_PROJECT_REPONAME}:latest ls
+          docker run ${CIRCLE_PROJECT_REPONAME}:latest ls
 
       - run: |
-          docker run {CIRCLE_PROJECT_REPONAME}:latest phantomjs screenshot.js
+          docker run ${CIRCLE_PROJECT_REPONAME}:latest phantomjs screenshot.js
 
       - store_artifacts:
             path: ./screenshot.png
