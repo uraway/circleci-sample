@@ -16,8 +16,40 @@ jobs:
           command: docker build -t sample-app --cache-from ${REGISTORY_URL}:latest .
       - run: docker push ${REGISTORY_URL}:latest
 
+      - run:
+          name: イメージのレイヤーを.tarにまとめて保存
+          command: |
+            mkdir -p ~/caches
+            docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
+
+      - persist_to_workspace:
+            root: ./
+            paths:
+                - ~/caches
+
+  e2e:
+    machine: true
+    steps:
+        - checkout
+        - attach_workspace:
+              at: ./
+        - setup_remote_docker
+        - run: docker images
+
+        - run:
+            name: イメージの.tarキャッシュがあればロード
+            command: |
+              set +o pipefail
+              docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
+
+        - run: docker images
+        - run: docker run ${CIRCLE_PROJECT_REPONAME} phantomjs screenshot.js
+
 workflows:
   version: 2
   main:
     jobs:
     - build
+    - e2e:
+        requires:
+          - build
