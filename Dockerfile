@@ -4,7 +4,7 @@ RUN apt-get update -qq && \
     build-essential chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev
 
 # PhantomJS
-RUN PHANTOM_JS="phantomjs-1.9.8-linux-x86_64"
+ENV PHANTOM_JS="phantomjs-1.9.8-linux-x86_64"
 RUN wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOM_JS.tar.bz2 && \
     mv $PHANTOM_JS.tar.bz2 /usr/local/share/ && \
     cd /usr/local/share/ && \
