@@ -3,34 +3,13 @@ jobs:
   build:
     machine: true
     steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - v3-image-{{ .Branch }}
-        - v3-image-
-    - run:
-        command: |
-          set +o pipefail
-          docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
-    - run:
-        command: |
-          docker images
-    - run:
-        command: |
-          docker build -t ${CIRCLE_PROJECT_REPONAME} .
-    - run:
-        command: |
-          docker run ${CIRCLE_PROJECT_REPONAME} phantomjs screenshot.js
-    - store_artifacts:
-        path: ./screenshot.png
-    - run:
-        command: |
-          mkdir -p ~/caches
-          docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
-    - save_cache:
-        key: v3-image-{{ .Branch }}-{{ epoch }}
-        paths:
-        - ~/caches
+      - checkout
+      - run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+      - run: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
+      - run: docker pull ${REGISTORY_URL}:latest
+      - run: docker build -t ${REGISTORY_URL}:latest --cache-from ${REGISTORY_URL}:latest .
+      - run: docker push ${REGISTORY_URL}:latest
+
 workflows:
   version: 2
   main:
