@@ -17,7 +17,7 @@ jobs:
           docker images
     - run:
         command: |
-          docker build --cache-from=${CIRCLE_PROJECT_REPONAME}:latest -t ${CIRCLE_PROJECT_REPONAME} .
+          docker build -t ${CIRCLE_PROJECT_REPONAME} .
     - run:
         command: |
           docker run ${CIRCLE_PROJECT_REPONAME} phantomjs screenshot.js
