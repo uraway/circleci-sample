@@ -5,33 +5,14 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - v2-image-{{ .Branch }}
-            - v2-image-
-
       - run: |
-          set +o pipefail
-          docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
-
-      - run: |
-          docker build --cache-from=${CIRCLE_PROJECT_REPONAME} -t ${CIRCLE_PROJECT_REPONAME}:latest .
+          docker build -t ${CIRCLE_PROJECT_REPONAME}:latest .
 
       - run: |
           docker run ${CIRCLE_PROJECT_REPONAME}:latest phantomjs screenshot.js
 
       - store_artifacts:
             path: ./screenshot.png
-
-      - run: |
-          mkdir -p ~/caches
-          docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
-
-      - save_cache:
-          key: v2-image-{{ .Branch }}
-          paths:
-            - ~/caches
-
 
 workflows:
     version: 2
