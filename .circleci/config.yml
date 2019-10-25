@@ -25,7 +25,7 @@ jobs:
       - persist_to_workspace:
             root: ~/
             paths:
-                - ~/caches
+                - caches
 
   e2e:
     machine: true
