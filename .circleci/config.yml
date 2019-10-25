@@ -1,39 +1,24 @@
-version: 2.1
+version: 2
 jobs:
   build:
     machine: true
     steps:
       - checkout
       - run:
-          name: イメージのビルド
-          command: docker build -t ${CIRCLE_PROJECT_REPONAME} .
+          name: 環境変数REGISTORY_URLの設定
+          command: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
       - run:
-          name: イメージのレイヤーを.tarにまとめて保存
+          name: 指定イメージのpull
+          command: docker pull ${REGISTORY_URL}:latest
+      - run:
+          name: イメージのビルド
+          command: docker build -t circleci-sample --cache-from ${REGISTORY_URL}:latest .
+
+      - run:
+          name: curl
           command: |
-            mkdir -p ~/caches
-            docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
-
-      - persist_to_workspace:
-            root: ~/
-            paths:
-                - caches
-
-  e2e:
-    machine: true
-    steps:
-        - checkout
-        - attach_workspace:
-              at: ~/
-        - run: docker images
-
-        - run:
-            name: イメージの.tarキャッシュがあればロード
-            command: |
-              set +o pipefail
-              docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
-
-        - run: docker images
-        - run: docker run ${CIRCLE_PROJECT_REPONAME} phantomjs screenshot.js
+            docker run -d -p 3000:3000 circleci-sample
+            curl --retry 10 --retry-connrefused http://localhost:3000
 
 workflows:
   version: 2
