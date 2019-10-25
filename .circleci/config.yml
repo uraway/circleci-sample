@@ -6,8 +6,8 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-          - v2-image-{{ .Branch }}
-          - v2-image-
+          - v3-image-{{ .Branch }}
+          - v3-image-
     - run: |
           set +o pipefail
           docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
@@ -23,7 +23,7 @@ jobs:
           mkdir -p ~/caches
           docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
     - save_cache:
-        key: v2-image-{{ .Branch }}-{{ epoch }}
+        key: v3-image-{{ .Branch }}-{{ epoch }}
         paths:
           - ~/caches
 workflows:
