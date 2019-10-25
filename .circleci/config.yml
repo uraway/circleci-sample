@@ -23,7 +23,7 @@ jobs:
             docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
 
       - persist_to_workspace:
-            root: ./
+            root: ~/
             paths:
                 - ~/caches
 
@@ -32,7 +32,7 @@ jobs:
     steps:
         - checkout
         - attach_workspace:
-              at: ./
+              at: ~/
         - setup_remote_docker
         - run: docker images
 
