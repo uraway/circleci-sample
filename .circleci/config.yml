@@ -14,11 +14,11 @@ jobs:
           command: docker pull ${REGISTORY_URL}:latest
       - run:
           name: イメージのビルド
-          command: docker build -t circleci-sample --cache-from ${REGISTORY_URL}:latest .
+          command: docker tag ${REGISTORY_URL}:latest circleci-sample
       - run:
           name: curl
           command: |
-            docker run -d -p 3000:3000 circleci-sample
+            docker run -d -p 3000:3000 --name circleci-sample circleci-sample
             # curl --retry 10 --retry-connrefused http://localhost:3000
             docker exec circleci-sample curl --retry 10 --retry-connrefused http://localhost:3000
 
