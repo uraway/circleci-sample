@@ -25,7 +25,7 @@ jobs:
     - save_cache:
         key: v2-image-{{ .Branch }}-{{ epoch }}
         paths:
-        - ~/caches/${CIRCLE_PROJECT_REPONAME}.tar
+          - ~/caches
 workflows:
   version: 2
   main:
