@@ -5,9 +5,15 @@ jobs:
     steps:
       - checkout
       - run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-      - run: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
-      - run: docker pull ${REGISTORY_URL}:latest
-      - run: docker build -t ${REGISTORY_URL}:latest --cache-from ${REGISTORY_URL}:latest .
+      - run:
+          name: 環境変数REGISTORY_URLの設定
+          command: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
+      - run:
+          name: 指定イメージのpull
+          command: docker pull ${REGISTORY_URL}:latest
+      - run:
+          name: イメージのビルド
+          command: docker build -t sample-app --cache-from ${REGISTORY_URL}:latest .
       - run: docker push ${REGISTORY_URL}:latest
 
 workflows:
