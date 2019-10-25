@@ -42,7 +42,7 @@ jobs:
               docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
 
         - run: docker images
-        - run: docker run ${CIRCLE_PROJECT_REPONAME} phantomjs screenshot.js
+        - run: docker run ${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME} phantomjs screenshot.js
 
 workflows:
   version: 2
