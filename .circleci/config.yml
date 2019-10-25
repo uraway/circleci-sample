@@ -5,8 +5,6 @@ jobs:
     steps:
       - checkout
 
-      - run: sudo curl --output /usr/local/bin/phantomjs https://s3.amazonaws.com/circle-downloads/phantomjs-2.1.1
-
       - restore_cache:
           keys:
             - v2-image-{{ .Branch }}
@@ -20,8 +18,7 @@ jobs:
           docker build --cache-from=${CIRCLE_PROJECT_REPONAME} -t ${CIRCLE_PROJECT_REPONAME}:latest .
 
       - run: |
-          docker-compose up -d
-          phantomjs screenshot.js
+          docker run {CIRCLE_PROJECT_REPONAME}:latest phantomjs screenshot.js
 
       - store_artifacts:
             path: ./screenshot.png

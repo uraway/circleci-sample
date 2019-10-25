@@ -1,5 +1,8 @@
 FROM ruby:2.6.5
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client yarn
+
+RUN sudo curl --output /usr/local/bin/phantomjs https://s3.amazonaws.com/circle-downloads/phantomjs-2.1.1
+
 RUN mkdir /sample-app
 WORKDIR /sample-app
 COPY Gemfile /sample-app/Gemfile
