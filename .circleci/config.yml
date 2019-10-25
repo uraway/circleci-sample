@@ -20,7 +20,7 @@ jobs:
           name: イメージのレイヤーを.tarにまとめて保存
           command: |
             mkdir -p ~/caches
-            docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
+            docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${REGISTORY_URL}
 
       - persist_to_workspace:
             root: ~/
