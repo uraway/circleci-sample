@@ -19,7 +19,7 @@ jobs:
       - run:
           name: フォルダのマウント
           command: |
-            docker volume create --name tmp
+            docker container create --name tmp -v /tmp-volume busybox
             docker cp ./sample tmp:/sample
             docker run --volumes-from tmp busybox test -f sample/hello_world.txt
 
