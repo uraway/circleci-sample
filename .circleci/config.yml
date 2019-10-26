@@ -8,10 +8,10 @@ jobs:
       - setup_remote_docker
       - run:
           name: sampleディレクトリの作成
-          command: mkdir -p sample
+          command: mkdir -p sample && touch sample/hello_world.txt
       - run:
           name: フォルダのマウント
-          command: docker run -v sample:/sample busybox ls
+          command: docker run -v sample:/sample busybox ls sample
 
 workflows:
   version: 2
