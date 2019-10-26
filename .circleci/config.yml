@@ -6,7 +6,7 @@ jobs:
       - checkout
       - run: docker run --name phantomjs -d -p 8910:8910 wernight/phantomjs phantomjs
       - run: docker cp ./screenshot.js phantomjs:/screenshot.js
-      - run: docker run phantomjs phantomjs screenshot.js
+      - run: docker run -it phantomjs phantomjs screenshot.js
       - run: docker cp phantomjs:/screenshot.png ./
       - store_artifacts:
             path: ./screenshot.png
