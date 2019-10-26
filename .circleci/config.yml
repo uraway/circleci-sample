@@ -6,7 +6,7 @@ jobs:
       - checkout
       - run: |
           docker container create --name tmp -v /tmp-volume busybox
-          docker cp ./screenshot.js/. tmp:/app/screenshot.js
+          docker cp ./screenshot.js tmp:/app/screenshot.js
           docker run --volumes-from tmp circleci/ruby:2.6.5-browsers-legacy phantomjs screenshot.js
 
       - store_artifacts:
