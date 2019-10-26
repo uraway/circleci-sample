@@ -7,11 +7,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: tmpディレクトリの作成
-          command: mkdir -p tmp
+          name: sampleディレクトリの作成
+          command: mkdir -p sample
       - run:
           name: フォルダのマウント
-          command: docker run -v tmp:/tmp busybox ls
+          command: docker run -v sample:/ busybox ls
 
 workflows:
   version: 2
