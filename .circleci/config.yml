@@ -12,20 +12,14 @@ jobs:
       - run:
           name: 確認
           command: |
-            result = $(ls sample)
-            if ["${result}" == "hello_world.txt"]; then
-              echo "success"
-            fi
+            test -f sample/hello_world.txt; echo $?
       - run:
           name: busyboxイメージのpull
           command: docker pull busybox
       - run:
           name: フォルダのマウント
           command: |
-            result = $(docker run -v sample:/sample busybox ls sample)
-            if ["${result}" == "hello_world.txt"]; then
-              echo "success"
-            fi
+            docker run -v sample:/sample busybox test -f sample/hello_world.txt; echo $?
 
 workflows:
   version: 2
