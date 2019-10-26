@@ -1,45 +1,23 @@
-orbs:
-  orb-tools: circleci/orb-tools@8.27.4
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: sampleディレクトリの作成
+          command: mkdir -p sample && touch sample/hello_world.txt
+      - run:
+          name: 確認
+          command: ls sample
+      - run:
+          name: フォルダのマウント
+          command: docker run -v sample:/sample busybox ls sample
 
-version: 2.1
 workflows:
-  promote-orb:
+  version: 2
+  main:
     jobs:
-      - orb-tools/dev-promote-prod:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-patch.*/
-          orb-name: uraway/hello-build
-          release: patch
-      - orb-tools/dev-promote-prod:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-minor.*/
-          orb-name: uraway/hello-build
-          release: minor
-      - orb-tools/dev-promote-prod:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-major.*/
-          orb-name: uraway/hello-build
-          release: major
-  publish-dev:
-    jobs:
-      - orb-tools/pack
-      - orb-tools/publish-dev:
-          requires: [orb-tools/pack]
-          orb-name: uraway/hello-build
-          checkout: true
-          validate: true
-      - orb-tools/trigger-integration-workflow:
-          filters:
-            branches:
-              only: master
-          requires: [orb-tools/publish-dev]
-          tag: master
+    - build

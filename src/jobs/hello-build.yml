@@ -1,6 +1,0 @@
-parameters:
-  e:
-    type: executor
-executor: << parameters.e >>
-steps:
-  - run: echo "Hello, build!"
