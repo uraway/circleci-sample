@@ -5,12 +5,10 @@ jobs:
     steps:
       - checkout
       - run: |
-          docker container create --name tmp -v /tmp-volume busybox
-          docker cp ./screenshot.js tmp:/screenshot.js
-          docker run --volumes-from tmp circleci/ruby:2.6.5-browsers-legacy phantomjs screenshot.js
+          docker run -v `pwd`:/tmp/screenshot mokemokechicken/capture_web "https://circleci.com" screenshot.png
 
       - store_artifacts:
-            path: ./screenshot.png
+            path: ./screenshot
 
 workflows:
     version: 2
