@@ -11,14 +11,21 @@ jobs:
           command: mkdir -p sample && touch sample/hello_world.txt
       - run:
           name: 確認
-          command: ls sample
+          command: |
+            result = $(ls sample)
+            if ["${result}" == "hello_world.txt"]; then
+              echo "success"
+            fi
       - run:
           name: busyboxイメージのpull
           command: docker pull busybox
       - run:
           name: フォルダのマウント
           command: |
-            docker run -v sample:/sample busybox ls sample
+            result = $(docker run -v sample:/sample busybox ls sample)
+            if ["${result}" == "hello_world.txt"]; then
+              echo "success"
+            fi
 
 workflows:
   version: 2
