@@ -5,10 +5,9 @@ jobs:
     steps:
       - checkout
       - run: |
-          docker container create --name tmp -v /app busybox
-          docker cp ./. tmp:/app
-          docker run --name app -d --volumes-from tmp circleci/ruby:2.6.5-browsers-legacy bundle install && bundle exec rails s -p 3000 -b '0.0.0.0'
-          docker exec app phantomjs screenshot.js
+          docker container create --name tmp -v /tmp-volume busybox
+          docker cp ./. tmp:/tmp-volume
+          docker run --name app --volumes-from ./tmp-volume circleci/ruby:2.6.5-browsers-legacy phantomjs screenshot.js
 
       - store_artifacts:
             path: ./screenshot.png
