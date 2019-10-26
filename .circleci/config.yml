@@ -7,20 +7,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: 環境変数REGISTORY_URLの設定
-          command: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
+          name: tmpディレクトリの作成
+          command: mkdir -p tmp
       - run:
-          name: 指定イメージのpull
-          command: docker pull ${REGISTORY_URL}:latest
-      - run:
-          name: イメージのビルド
-          command: docker tag ${REGISTORY_URL}:latest circleci-sample
-      - run:
-          name: curl
-          command: |
-            docker run -d -p 3000:3000 --name circleci-sample circleci-sample
-            # curl --retry 10 --retry-connrefused http://localhost:3000
-            docker exec circleci-sample curl --retry 10 --retry-connrefused http://localhost:3000
+          name: フォルダのマウント
+          command: docker run -v tmp:/tmp busybox ls
 
 workflows:
   version: 2
