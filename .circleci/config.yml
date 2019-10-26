@@ -5,7 +5,8 @@ jobs:
     steps:
       - checkout
       - run: |
-          docker run -v `pwd`:/tmp/screenshot mokemokechicken/capture_web "https://circleci.com" screenshot.png
+          docker run --name app mokemokechicken/capture_web "https://circleci.com" screenshot.png
+          docker cp app:/tmp/screenshot ./
 
       - store_artifacts:
             path: ./screenshot
