@@ -1,34 +1,23 @@
-version: 2.1
+version: 2
 jobs:
   build:
-    parallelism: 3
     docker:
-      - image: circleci/ruby:2.6.5-node
-        environment:
-          BUNDLE_JOBS: 3
-          BUNDLE_RETRY: 3
-          BUNDLE_PATH: vendor/bundle
-          PGHOST: localhost
-          PGUSER: postgres
-          RAILS_ENV: test
-      - image: circleci/postgres:9.6.9-alpine
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: sample_app_test
-          POSTGRES_PASSWORD: ""
+      - image: circleci/ruby
     steps:
       - checkout
-
-      - setup_remote_docker:
-          # docker_layer_caching: true
-          version: 17.05.0-ce
-
-      - run: docker build -t myapp:$CIRCLE_BRANCH .
-
-      - run: docker images
+      - setup_remote_docker
+      - run:
+          name: sampleディレクトリの作成
+          command: mkdir -p sample && touch sample/hello_world.txt
+      - run:
+          name: フォルダのマウント
+          command: docker run -v sample:/sample busybox ls sample
 
 workflows:
-    version: 2
-    main:
-      jobs:
-        - build
+  version: 2
+  main:
+    jobs:
+    - build
+    - e2e:
+        requires:
+          - build
