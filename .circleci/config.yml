@@ -12,14 +12,14 @@ jobs:
       - run:
           name: 確認
           command: |
-            test sample/hello_world.txt
+            test sample/hello_world.txt; echo $?
       - run:
           name: busyboxイメージのpull
           command: docker pull busybox
       - run:
           name: フォルダのマウント
           command: |
-            docker run -v sample:/sample busybox test sample/hello_world.txt
+            docker run -v sample:/sample busybox test sample/hello_world.txt;echo $?
 
 workflows:
   version: 2
