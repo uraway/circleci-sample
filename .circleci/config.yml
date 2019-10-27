@@ -78,6 +78,7 @@ jobs:
     environment:
       BUNDLE_PATH: vendor/bundle
     steps:
+      - checkout
       - attach_workspace:
             at: ~/project
       - run: bundle install
