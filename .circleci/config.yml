@@ -1,15 +1,23 @@
 version: 2.1
 jobs:
   build:
-    machine: true
+    docker:
+        - image: busybox
     steps:
-      - checkout
-      - run: docker run --name phantomjs -d -p 8910:8910 wernight/phantomjs phantomjs
-      - run: docker cp ./screenshot.js phantomjs:/screenshot.js
-      - run: docker run phantomjs phantomjs screenshot.js
-      - run: docker cp phantomjs:/screenshot.png ./
-      - store_artifacts:
-            path: ./screenshot.png
+      - run: which docker
+      - setup_remote_docker
+      - run: which docker
+
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+
+      - run: docker images
 
 workflows:
   version: 2
