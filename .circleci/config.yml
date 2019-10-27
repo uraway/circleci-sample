@@ -8,6 +8,7 @@ jobs: # A basic unit of work in a run
       - image: circleci/python:3.8
         environment: # environment variables for primary container
           DB_NAME: test_db
+          DB_USER: root
           DB_HOST: 127.0.0.1
           DB_PASSWORD: ''
       # CircleCI PostgreSQL images available at: https://hub.docker.com/r/circleci/postgres/
