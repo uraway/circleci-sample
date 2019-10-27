@@ -4,19 +4,16 @@ jobs:
     parallelism: 3
     docker:
     - image: circleci/ruby:2.6.5-node
-      environment:
-        BUNDLE_JOBS: 3
-        BUNDLE_RETRY: 3
-        BUNDLE_PATH: vendor/bundle
-        POSTGRES_HOST: localhost
-        POSTGRES_USER: postgres
-        POSTGRES_DB: postgres
-        RAILS_ENV: test
     - image: circleci/postgres:9.6.9-alpine
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_DB: sample_app_test
-        POSTGRES_PASSWORD: ''
+    environment:
+      BUNDLE_JOBS: 3
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: vendor/bundle
+      POSTGRES_HOST: localhost
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ''
+      RAILS_ENV: test
     steps:
     - checkout
     - restore_cache:
