@@ -67,16 +67,17 @@ jobs:
           cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
     - store_test_results:
         path: test_results
-
+    - persist_to_workspace:
+        root: ~/project
+        paths:
+          - vendor/bundle
+          - coverage_results
   coverage:
     docker:
       - image: circleci/ruby:2.6.5-node
     steps:
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - vendor/bundle
-            - coverage_results
+      - attach_workspace:
+            at: ~/project
       - run:
           name: Merge Coverage Results
           command: |
