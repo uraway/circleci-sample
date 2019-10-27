@@ -1,7 +1,9 @@
 version: '3'
 services:
   db:
-    image: postgres
+    image: circleci/postgres:9.6.9-alpine
+    env_file:
+      - .env
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
   web:
@@ -11,7 +13,7 @@ services:
       - .:/sample-app
     ports:
       - "3000:3000"
-    environment:
-      PGHOST: db
+    env_file:
+      - .env
     depends_on:
       - db
