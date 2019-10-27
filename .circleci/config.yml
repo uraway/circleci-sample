@@ -80,6 +80,7 @@ jobs:
     steps:
       - attach_workspace:
             at: ~/project
+      - run: bundle install
       - run:
           name: Merge Coverage Results
           command: |
