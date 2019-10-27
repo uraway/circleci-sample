@@ -21,13 +21,13 @@ jobs:
       - run: ls -l /usr/local/bin
 
       - restore_cache:
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: |
             # sudo pip install pipenv
             pipenv install
       - save_cache:
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - ".venv"
             - "/usr/local/bin"
