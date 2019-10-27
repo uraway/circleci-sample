@@ -60,18 +60,34 @@ jobs:
                             --out test_results/rspec.xml \
                             $TEST_FILES
 
-    # - run:
-    #     name: Stash Coverage Results
-    #     command: |
-    #       mkdir coverage_results
-    #       cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
+    - run:
+        name: Stash Coverage Results
+        command: |
+          mkdir coverage_results
+          cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
     - store_test_results:
         path: test_results
 
-    - store_artifacts:
+  coverage:
+    docker:
+      - image: circleci/ruby:2.6.5-node
+    steps:
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - vendor/bundle
+            - coverage_results
+      - run:
+          name: Merge Coverage Results
+          command: |
+            bundle exec rake simplecov:merge_results
+      - store_artifacts:
           path: coverage
 workflows:
   version: 2
   main:
     jobs:
     - build_and_test
+    - coverage:
+        requires:
+            - build_and_test
