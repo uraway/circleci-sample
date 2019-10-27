@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: alpine
     steps:
-      - run: apt update && apt install -y curl
+      - run: apt-get update && apt-get install -y curl
       - setup_remote_docker
 
       - run:
