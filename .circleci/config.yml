@@ -2,11 +2,9 @@ version: 2.1
 jobs:
   build:
     docker:
-        - image: busybox
+      - image: busybox
     steps:
-      - run: which docker
       - setup_remote_docker
-      - run: which docker
 
       - run:
           name: Install Docker client
