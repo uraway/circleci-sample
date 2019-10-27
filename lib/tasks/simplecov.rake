@@ -4,7 +4,7 @@ namespace :simplecov do
   desc "merge_results"
   task merge_results: :environment do
     SimpleCov.start 'rails' do
-      skip_check_coverage = ENV.fetch("SKIP_COVERAGE_CHECK", "false")
+      add_filter '/spec/'
       merge_timeout(3600)
     end
     merge_results
