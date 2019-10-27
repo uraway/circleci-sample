@@ -5,8 +5,9 @@ jobs:
       - image: alpine
     steps:
       - run: apk add curl
+      - run: which docker
       - setup_remote_docker
-
+      - run: which docker
       - run:
           name: Install Docker client
           command: |
@@ -16,7 +17,7 @@ jobs:
             tar -xz -C /tmp -f /tmp/docker-$VER.tgz
             mv /tmp/docker/* /usr/bin
 
-      - run: docker images
+      - run: which docker
 
 workflows:
   version: 2
