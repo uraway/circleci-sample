@@ -64,7 +64,7 @@ jobs:
         name: Stash Coverage Results
         command: |
           mkdir coverage_results
-          cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
+          cp coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
     - store_test_results:
         path: test_results
     - persist_to_workspace:
