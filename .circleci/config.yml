@@ -34,7 +34,7 @@ jobs:
             - "/usr/local/lib/python3.6/site-packages"
       - run:
           command: |
-            pipenv run coverage run --source='.' manage.py test polls/
+            pipenv run coverage run manage.py test
       - store_test_results:
           path: test-reports
       - store_artifacts:

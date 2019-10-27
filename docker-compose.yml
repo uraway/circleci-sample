@@ -12,6 +12,7 @@ services:
       DB_USER: root
       DB_HOST: db
       DB_PASSWORD: ''
+      DB_PORT: 3306
   db:
     image: circleci/mysql:5.7
     volumes:
