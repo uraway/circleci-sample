@@ -25,6 +25,10 @@ jobs: # basic units of work in a run
 
       - run: mkdir -p /tmp/test-results/go-test
 
+      - run:
+          command: go run main.go
+          background: true
+
       - run: go test -v 2>&1 | go-junit-report > /tmp/test-results/go-test/result.xml
 
       - save_cache: # Store cache in the /go/pkg directory
