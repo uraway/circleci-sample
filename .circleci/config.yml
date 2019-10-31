@@ -8,6 +8,8 @@ jobs: # basic units of work in a run
         environment: # environment variables for primary container
           MYSQL_DATABASE: ci_db
           MYSQL_HOST: localhost
+          MYSQL_PASS: ""
+          MYSQL_USER: root
     # directory where steps are run. Path must conform to the Go Workspace requirements
     working_directory: /go/src/github.com/uraway/circleci-sample
 
