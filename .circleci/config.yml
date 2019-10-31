@@ -5,8 +5,8 @@ jobs: # basic units of work in a run
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
       - image: circleci/golang:1.13.3
       - image: circleci/mysql:5.7
-    environment: # environment variables for primary container
-      MYSQL_DATABASE: ci_db
+    environment:
+      MYSQL_DATABASE: circle_test
       MYSQL_HOST: localhost
       MYSQL_PASS: ""
       MYSQL_USER: root
