@@ -5,11 +5,11 @@ jobs: # basic units of work in a run
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
       - image: circleci/golang:1.13.3
       - image: circleci/mysql:5.7
-        environment: # environment variables for primary container
-          MYSQL_DATABASE: ci_db
-          MYSQL_HOST: localhost
-          MYSQL_PASS: ""
-          MYSQL_USER: root
+    environment: # environment variables for primary container
+      MYSQL_DATABASE: ci_db
+      MYSQL_HOST: localhost
+      MYSQL_PASS: ""
+      MYSQL_USER: root
     # directory where steps are run. Path must conform to the Go Workspace requirements
     working_directory: /go/src/github.com/uraway/circleci-sample
 
@@ -30,6 +30,12 @@ jobs: # basic units of work in a run
       - run:
           command: go run main.go
           background: true
+
+      - run:
+          name: Validate service is working
+          command: |
+            sleep 5
+            curl --retry 10 --retry-delay 1 -X GET http://localhost:8080/
 
       - run: go test -v 2>&1 | go-junit-report > /tmp/test-results/go-test/result.xml
 
