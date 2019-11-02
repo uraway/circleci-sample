@@ -38,9 +38,9 @@ jobs: # basic units of work in a run
             done
             echo Failed waiting for MySQL && exit 1
 
-      - run:
-          command: go run main.go
-          background: true
+      #- run:
+      #    command: go run main.go
+      #    background: true
 
       #- run:
       #    name: Validate service is working
