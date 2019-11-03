@@ -1,25 +1,40 @@
 version: 2.1
+
 jobs:
-  build:
+  backup_job:
     docker:
-      - image: alpine
+      - image: circleci/python:3.7-stretch
     steps:
-      - run: apk add curl
-      - setup_remote_docker
-      - run: docker -v
-      - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="17.03.0-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
-
-      - run: docker -v
-
+      - add_ssh_keys: # ・・・ 1
+          fingerprints:
+            - "51:73:ba:b2:f2:3b:8a:21:fc:5b:14:80:71:ac:bf:f3"
+      - run: # ・・・ 2
+          name: "DBバックアップを作成する"
+          command:
+            today=$(date "+%Y%m%d")
+            echo "sudo -u postgres && pg_dump -Fc postgres" | ssh -l ${USER} ${HOST}
+      #- run: # ・・・ 3
+      #    name: "DBバックアップを取得する"
+      #    command:
+      #      scp -r ${USER}@${HOST}:/home/someuser/someapp/backups ./
+      - run:  # ・・・ 4
+          name: Install awscli
+          command: sudo pip install awscli
+      #- run:
+      #    name: Deploy to S3
+      #    command: aws s3 sync jekyll/_site/docs s3://circle-production-static-site/docs/ --delete
+      - store_artifacts:
+          name: "DBバックアップをCircleCIにアップロードする"
+          path: ./backups
 workflows:
   version: 2
-  main:
+  backup:
+    #triggers:
+    #  - schedule:
+    #      cron: "0 0 * * *"
+    #      filters:
+    #        branches:
+    #          only:
+    #            - master
     jobs:
-    - build
+      - backup_job
