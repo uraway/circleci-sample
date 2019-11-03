@@ -10,7 +10,7 @@ jobs:
             - "51:73:ba:b2:f2:3b:8a:21:fc:5b:14:80:71:ac:bf:f3"
       - run: # ・・・ 2
           name: "DBバックアップを作成する"
-          command:
+          command: |
             mkdir -p backups
             today=$(date "+%Y%m%d")
             ssh -oStrictHostKeyChecking=no -l ${USER} ${HOST} "pg_dump -Fc postgres"
