@@ -12,7 +12,7 @@ jobs:
           name: "DBバックアップを作成する"
           command:
             today=$(date "+%Y%m%d")
-            echo "pg_dump -Fc postgres" | ssh -tt -l ${USER} ${HOST}
+            echo "pg_dump -Fc postgres" | ssh -oStrictHostKeyChecking=no -l ${USER} ${HOST}
       #- run: # ・・・ 3
       #    name: "DBバックアップを取得する"
       #    command:
