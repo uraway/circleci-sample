@@ -1,25 +1,49 @@
-version: 2.1
+version: 2
 jobs:
   build:
     docker:
-      - image: alpine
+      - image: circleci/golang:1.13.3
+      - image: circleci/mysql:5.7
+    environment:
+      MYSQL_DATABASE: circle_test
+      MYSQL_HOST: localhost
+      MYSQL_PASS: ""
+      MYSQL_USER: root
+
+    working_directory: /go/src/github.com/uraway/circleci-sample
+
     steps:
-      - run: apk add curl
-      - setup_remote_docker
-      - run: docker -v
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-pkg-cache
+
+      - run: go get github.com/jstemmer/go-junit-report
+
+      - run: mkdir -p /tmp/test-results/go-test
+
       - run:
-          name: Install Docker client
+          name: Waiting for MySQL to be ready
           command: |
-            set -x
-            VER="17.03.0-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
 
-      - run: docker -v
+      - run: go test -v 2>&1 | go-junit-report > /tmp/test-results/go-test/result.xml
 
-workflows:
-  version: 2
-  main:
-    jobs:
-    - build
+      - save_cache:
+          key: v1-pkg-cache
+          paths:
+            - "/go/pkg"
+
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+
+      - store_test_results:
+          path: /tmp/test-results
