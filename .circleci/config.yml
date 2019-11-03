@@ -13,7 +13,7 @@ jobs:
           command:
             mkdir -p backups
             today=$(date "+%Y%m%d")
-            echo "pg_dump -Fc postgres" >> "./backups/${today}.dump" | ssh -oStrictHostKeyChecking=no -l ${USER} ${HOST}
+            echo "pg_dump -Fc postgres" | ssh -oStrictHostKeyChecking=no -l ${USER} ${HOST} >> "./backups/${today}.dump"
       #- run: # ・・・ 3
       #    name: "DBバックアップを取得する"
       #    command:
