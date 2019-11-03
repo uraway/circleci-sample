@@ -11,8 +11,9 @@ jobs:
       - run: # ・・・ 2
           name: "DBバックアップを作成する"
           command:
+            mkdir -p backups
             today=$(date "+%Y%m%d")
-            echo "pg_dump -Fc postgres" | ssh -oStrictHostKeyChecking=no -l ${USER} ${HOST}
+            echo "pg_dump -Fc postgres" >> "${today}.dump" | ssh -oStrictHostKeyChecking=no -l ${USER} ${HOST}
       #- run: # ・・・ 3
       #    name: "DBバックアップを取得する"
       #    command:
@@ -20,9 +21,9 @@ jobs:
       - run:  # ・・・ 4
           name: Install awscli
           command: sudo pip install awscli
-      #- run:
-      #    name: Deploy to S3
-      #    command: aws s3 sync jekyll/_site/docs s3://circle-production-static-site/docs/ --delete
+      - run:
+          name: Deploy to S3
+          command: aws s3 sync ./backups s3://s3://circleci-sample-app-backup/backups
       - store_artifacts:
           name: "DBバックアップをCircleCIにアップロードする"
           path: ./backups
