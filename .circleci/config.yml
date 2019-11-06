@@ -19,7 +19,7 @@ jobs:
       - run: # ・・・ 2
           name: "GitHub Issueに投げる"
           command: |
-            body=`cat .npm_audit.log | sed 's/$/<br>/'`
+            body=$(cat .npm_audit.log | sed 's/$/<br>/')
 
             curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
                 https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues \
@@ -32,7 +32,6 @@ jobs:
 workflows:
   version: 2
   audit:
-    # Disable scheduled execution
     # triggers:
     #   - schedule:
     #       cron: "0 0 * * *"
