@@ -17,6 +17,6 @@
     },
     "homepage": "https://github.com/uraway/circleci-sample#readme",
     "dependencies": {
-        "lodash": "4.17.0"
+        "lodash": "^4.17.15"
     }
 }
