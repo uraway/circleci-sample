@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: circleci/node
     environment:
-      REVIEWDOG_VERSION: 0.9.12
+      REVIEWDOG_VERSION: 0.9.13
     parameters:
       reviewdog-github-api-token:
         type: env_var_name
@@ -26,12 +26,11 @@ jobs:
           name: "reviewdogを実行する"
           when: on_fail
           command: |
-            export REVIEWDOG_GITHUB_API_TOKEN=${<< parameters.reviewdog-github-api-token >>}
+            export REVIEWDOG_GITHUB_API_TOKEN=${GITHUB_TOKEN}
             cat .textlint.log | ./bin/reviewdog -f=checkstyle -name="textlint" -reporter="github-pr-review"
 
 workflows:
   version: 2
   proofreading:
     jobs:
-      - proofreading_job:
-          reviewdog-github-api-token: GITHUB_TOKEN
+      - proofreading_job
