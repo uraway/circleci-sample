@@ -18,7 +18,7 @@ jobs:
         - run:
             name: Test
             command: |
-              expected="echo \"Hello, CircleCI\""
+              expected='echo "Hello, CircleCI"'
               result=$(circleci config process .circleci/test.yml | yq '.jobs."hello-world/echo_job".steps[0].run.command')
 
               if [ "${result}" = "${expected}" ]; then
@@ -26,6 +26,8 @@ jobs:
               else
                 echo "${result} is not ${expected}"
               fi
+
+              echo $?;
 
 workflows:
   main:
