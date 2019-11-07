@@ -18,15 +18,9 @@ jobs:
         - run:
             name: Test
             command: |
-              expected='echo "Hello, CircleCI"'
               result=$(circleci config process .circleci/test.yml | yq '.jobs."hello-world/echo_job".steps[0].run.command')
 
-              if [ "${result}" = "${expected}" ]; then
-                echo "Success!"
-              else
-                echo "${result} is not ${expected}"
-              fi
-
+              echo ${result} | grep -o CircleCI
               echo $?;
 
 workflows:
