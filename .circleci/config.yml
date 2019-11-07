@@ -18,9 +18,10 @@ jobs:
         - run:
             name: Test
             command: |
+              expected = 'echo "Hello, CircleCI"'
               result=$(circleci config process .circleci/test.yml | yq '.jobs."hello-world/echo_job".steps[0].run.command')
-              test $result = "echo \"Hello, CircleCI!\""
-              echo $?
+              test "${result}" = "${expected}";
+              echo $?;
 
 workflows:
   main:

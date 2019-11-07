@@ -27,4 +27,4 @@ commands:
         type: string
         default: "World"
     steps:
-      - run: echo "Hello, << parameters.to >>!"
+      - run: echo "Hello, << parameters.to >>"
