@@ -1,0 +1,18 @@
+description: My Second Orb
+executors:
+  default:
+    docker:
+    - image: circleci/buildpack-deps:<< parameters.tag >>
+    parameters:
+      tag:
+        default: latest
+        type: string
+jobs:
+  hello-build:
+    executor: << parameters.e >>
+    parameters:
+      e:
+        type: executor
+    steps:
+    - run: echo "Hello, build!"
+version: 2.1
