@@ -1,10 +1,10 @@
 version: 2.1
 
 orbs:
-  hello: uraway/hello-build@dev:0.0.1
+  hello-world: uraway/hello-world@dev:0.0.1
 
 workflows:
   hello-workflow:
     jobs:
-      - hello/hello-build
-          tag: latest
+      - hello-world/echo_job:
+          to: CircleCI

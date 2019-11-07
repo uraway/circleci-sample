@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  my-orb/myjob:
+    docker:
+    - image: busybox
+    steps:
+    - run:
+        command: echo "Hello World!"
+workflows:
+  main:
+    jobs:
+    - my-orb/myjob
+  version: 2
+
+# Original config.yml file:
+# version: 2.1
+# description: \"My first orb\"
+# 
+# orbs:
+#   my-orb:
+#     executors:
+#       default:
+#         docker:
+#           - image: busybox
+#     commands:
+#       echo:
+#         steps:
+#           - run: echo \"Hello World!\"
+#     jobs:
+#       myjob:
+#         executor: default
+#         steps:
+#           - echo
+# 
+# workflows:
+#   main:
+#     jobs:
+#       - my-orb/myjob

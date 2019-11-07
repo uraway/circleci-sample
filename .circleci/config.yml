@@ -9,7 +9,18 @@ jobs:
       steps:
         - cli/install
         - checkout
-        - run: circleci orb validate ./src/orb.yml
+        - run:
+            name: Install yq
+            command: |
+              sudo apt update && \
+              sudo apt-get install jq python-pip python-dev && \
+              sudo pip install yq
+        - run:
+            name: Test
+            command: |
+              result=$(circleci config process .circleci/test.yml | yq '.jobs."hello-world/echo_job".steps[0].run.command')
+              test $result = "echo \"Hello, CircleCI!\""
+              echo $?
 
 workflows:
   main:
