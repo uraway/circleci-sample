@@ -12,10 +12,7 @@ jobs:
         - cli/install
         - checkout
         - run: circleci config process .circleci/test.yml > .circleci/2.0.yml
-        - run:
-            working_directory: ~/project
-            command: |
-              circleci local execute --config .circleci/2.0.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
+        - run: circleci local execute --volume .circleci/2.0.yml --config .circleci/2.0.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
 
 workflows:
   main:
