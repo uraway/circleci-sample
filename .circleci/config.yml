@@ -5,23 +5,13 @@ orbs:
 
 jobs:
     test:
-      executor: cli/default
+      docker:
+        - image: circleci/python
       steps:
         - cli/install
         - checkout
-        - run:
-            name: Install yq
-            command: |
-              sudo apt update && \
-              sudo apt-get install jq python-pip python-dev && \
-              sudo pip install yq
-        - run:
-            name: Test
-            command: |
-              result=$(circleci config process .circleci/test.yml | yq '.jobs."hello-world/echo_job".steps[0].run.command')
-
-              echo ${result} | grep -o Hello World
-              echo $?;
+        - run: circleci config process .circleci/test.yml > .circleci/2.0.yml
+        - run: circleci local execute --config .circleci/2.0.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
 
 workflows:
   main:
