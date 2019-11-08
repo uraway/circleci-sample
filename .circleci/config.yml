@@ -9,7 +9,7 @@ jobs:
       executor: orb-tools/alpine
       steps:
         - setup_remote_docker
-        #- cli/install
+        - cli/install
         - checkout
         - run: pwd
         #- run: circleci config process .circleci/test.yml > config.yml
