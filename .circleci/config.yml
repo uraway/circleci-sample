@@ -12,9 +12,9 @@ jobs:
         #- cli/install
         - checkout
         - run: pwd
-        - run: circleci config process .circleci/test.yml > config.yml
+        #- run: circleci config process .circleci/test.yml > config.yml
         - orb-tools/local-test-build:
-            test-config-location: ./config.yml
+            test-config-location: .circleci/test.yml
         #- run: circleci local execute --config config.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
 
 workflows:
