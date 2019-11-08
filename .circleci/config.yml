@@ -2,18 +2,18 @@ version: 2.1
 
 orbs:
   cli: circleci/circleci-cli@0.1.5
+  orb-tools: circleci/orb-tools@8.27.4
 
 jobs:
     test:
-      docker:
-        - image: circleci/python
+      executor: orb-tools/node
       steps:
         - setup_remote_docker
         - cli/install
         - checkout
         - run: pwd
-        - run: circleci config process .circleci/test.yml > .circleci/2.0.yml
-        - run: circleci local execute --volume $(pwd):./ --skip-checkout=false --config .circleci/2.0.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
+        - run: circleci config process .circleci/test.yml > config.yml
+        - run: circleci local execute --config config.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
 
 workflows:
   main:
