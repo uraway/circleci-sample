@@ -11,7 +11,7 @@ jobs:
         - setup_remote_docker
         - cli/install
         - checkout
-        - run: circleci config process .circleci/test.yml > /2.0.yml
+        - run: circleci config process .circleci/test.yml > .circleci/2.0.yml
         - run: circleci local execute --volume ~/project/.circleci/:.circleci/ --config .circleci/2.0.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
 
 workflows:
