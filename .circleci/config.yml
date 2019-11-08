@@ -13,7 +13,7 @@ jobs:
         - checkout
         - run: pwd
         - run: circleci config process .circleci/test.yml > .circleci/2.0.yml
-        - run: circleci local execute --volume $(pwd):/opt/app --config .circleci/2.0.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
+        - run: circleci local execute --volume $(pwd):./ --config .circleci/2.0.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
 
 workflows:
   main:
