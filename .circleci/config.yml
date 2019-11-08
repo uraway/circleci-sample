@@ -6,7 +6,7 @@ orbs:
 
 jobs:
     test:
-      executor: orb-tools/alpine
+      executor: orb-tools/ubuntu
       steps:
         - run:
             name: Dockerクライアントのインストール
