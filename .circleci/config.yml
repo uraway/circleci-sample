@@ -6,10 +6,6 @@ jobs:
       - image: circleci/node
     environment:
       REVIEWDOG_VERSION: 0.9.13
-    parameters:
-      reviewdog-github-api-token:
-        type: env_var_name
-        default: REVIEWDOG_GITHUB_API_TOKEN
     steps:
       - checkout
       - run:
