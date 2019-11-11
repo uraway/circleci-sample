@@ -9,9 +9,8 @@ jobs:
       steps:
         - cli/install
         - checkout
-        - run: pwd
-        - run: circleci local execute .circleci/processed.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
-
+        - run: circleci config process orb-test.yml > orb-test.2.0.yml
+        - run: circleci local execute --config orb-test.2.0.yml --job hello-world/echo_job
 workflows:
   main:
     jobs:
