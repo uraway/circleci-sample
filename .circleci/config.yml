@@ -5,13 +5,13 @@ orbs:
 
 jobs:
     test:
-      executor: cli/default
+      machine: true
       steps:
         - setup_remote_docker
         - cli/install
         - checkout
         - run: pwd
-        - run: circleci local execute --volume /home/circleci/project:/home/circleci/project --config /home/circleci/project/.circleci/processed.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
+        - run: circleci local execute .circleci/processed.yml --job hello-world/echo_job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
 
 workflows:
   main:
