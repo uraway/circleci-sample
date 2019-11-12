@@ -7,11 +7,8 @@ jobs:
     test:
       executor: cli/default
       steps:
-        - setup_remote_docker
-        - cli/install
         - checkout
-        - run: circleci config process orb-test.yml > orb-test.2.0.yml
-        - run: circleci local execute --config orb-test.2.0.yml --job hello-world/echo_job
+        - run: git clone git@github.com:uraway/protobuf-tutorial.git
 workflows:
   main:
     jobs:
