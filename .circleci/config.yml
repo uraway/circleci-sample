@@ -1,7 +1,4 @@
-version: 2.1
-
-orbs:
-  cli: circleci/circleci-cli@0.1.5
+version: 2
 
 jobs:
     test:
@@ -18,14 +15,14 @@ jobs:
               cd hello-world-integration-test
               git checkout -b ${BRANCH}
               cat <<EOF > .circleci/config.yml
-              version: 2.1
-              orbs:
-                hello-world: uraway/hello-world@dev:volatile
-              workflows:
-                hello-workflow:
-                  jobs:
-                    - hello-world/echo_job:
-                        to: CircleCI
+                version: 2.1
+                orbs:
+                  hello-world: uraway/hello-world@dev:volatile
+                workflows:
+                  hello-workflow:
+                    jobs:
+                      - hello-world/echo_job:
+                          to: CircleCI
               EOF
               git add .
               git commit -m "Updates from ${CIRCLE_BUILD_URL}"
@@ -50,6 +47,7 @@ jobs:
                 fi
               done
 workflows:
+  version: 2
   main:
     jobs:
       - test
