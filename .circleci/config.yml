@@ -9,6 +9,7 @@ jobs:
       steps:
         - checkout
         - run: git clone git@github.com:uraway/protobuf-tutorial.git
+        - run: git clone git@github.com:uraway/uraway-blog.git
 workflows:
   main:
     jobs:
