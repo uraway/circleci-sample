@@ -5,6 +5,9 @@ jobs:
       machine: true
       steps:
         - checkout
+        - run: |
+            git config --global user.email "circleci@example.com"
+            git config --global user.name "CircleCI"
         - run:
             name: 新しいdev用Orbを使って、別リポジトリのビルドを開始する
             command: |
