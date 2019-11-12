@@ -52,11 +52,10 @@ jobs:
         - run:
             name: ビルドが成功するまで問い合わせる
             command: |
-              echo https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1
-              which jq
               while true; do
                 curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed > build-result.json
                 STATUS=$(cat build-result.json | jq -r '.[0].status')
+                echo ${STATUS}
                 if [ "$STATUS" == "success" ];then
                   echo "Success"
                   exit 0
