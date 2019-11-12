@@ -1,13 +1,12 @@
 commands:
   echo_command:
-    echo_command:
-      description: echoコマンド
-      parameters:
-        to:
-          default: World
-          type: string
-      steps:
-      - run: echo "Hello, << parameters.to >>"
+    description: echoコマンド
+    parameters:
+      to:
+        default: World
+        type: string
+    steps:
+    - run: echo "Hello, << parameters.to >>"
 description: 初めてのOrb
 executors:
   default:
@@ -15,15 +14,14 @@ executors:
     - image: busybox
 jobs:
   echo_job:
-    echo_job:
-      description: echoジョブ
-      executor: default
-      parameters:
-        to:
-          default: World
-          type: string
-      steps:
-      - echo_command:
-          to: << parameters.to >>
+    description: echoジョブ
+    executor: default
+    parameters:
+      to:
+        default: World
+        type: string
+    steps:
+    - echo_command:
+        to: << parameters.to >>
 version: 2.1
 

@@ -1,11 +1,10 @@
 # src/jobs/hello-build.yml
-echo_job:
-  description: "echoジョブ"
-  parameters:
-    to:
-      type: string
-      default: "World"
-  executor: default
-  steps:
-    - echo_command:
-        to: << parameters.to >>
+description: "echoジョブ"
+parameters:
+  to:
+    type: string
+    default: "World"
+executor: default
+steps:
+  - echo_command:
+      to: << parameters.to >>

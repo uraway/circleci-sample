@@ -5,22 +5,50 @@ orbs:
 
 jobs:
     test:
-      executor: cli/default
+      machine: true
       steps:
-        - cli/install
         - checkout
         - run:
-            name: Install yq
+            name: 新しいdev用Orbを使って、別リポジトリのビルドを開始する
             command: |
-              sudo apt update && \
-              sudo apt-get install jq python-pip python-dev && \
-              sudo pip install yq
-        - run:
-            name: Test
-            command: |
-              result=$(circleci config process orb-test.yml | yq '.jobs."hello-world/echo_job".steps[0].run.command')
-              echo ${result} | grep "Hello, World"
+              export TEST_REPOSITORY=hello-world-integration-test
+              export BRANCH="INTEGRATION_TEST/${CIRCLE_SHA1}"
 
+              git clone git@github.com:uraway/${TEST_REPOSITORY}.git
+              cd hello-world-integration-test
+              git checkout -b ${BRANCH}
+              cat <<EOF > .circleci/config.yml
+              version: 2.1
+              orbs:
+                hello-world: uraway/hello-world@dev:volatile
+              workflows:
+                hello-workflow:
+                  jobs:
+                    - hello-world/echo_job:
+                        to: CircleCI
+              EOF
+              git add .
+              git commit -m "Updates from ${CIRCLE_BUILD_URL}"
+              git push
+
+        - run:
+            name: ビルドが成功するまで問い合わせる
+            command: |
+              while true; do
+                curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1 > build-result.json
+                LIFECYCLE=$(cat build-result.json | jq -r '.[0].lifecycle')
+                if [ "$LIFECYCLE" == "finished" ];then
+                  STATUS=$(cat build-result.json | jq -r '.[0].status')
+                  if [ "$STATUS" == "success" ];then
+                    echo "Success"
+                    exit 0
+                  else
+                    exit 1
+                  fi
+                else
+                  sleep 20
+                fi
+              done
 workflows:
   main:
     jobs:
