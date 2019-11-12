@@ -30,7 +30,7 @@ jobs:
               EOF
               git add .
               git commit -m "Updates from ${CIRCLE_BUILD_URL}"
-              git push
+              git push -f origin
 
         - run:
             name: ビルドが成功するまで問い合わせる
