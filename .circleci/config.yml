@@ -50,18 +50,20 @@ jobs:
               git push -f --set-upstream origin ${BRANCH}
 
         - run:
-            name: ビルドが成功するまで問い合わせる
+            name: ビルドが完了するまで問い合わせる
             command: |
               while true; do
                 curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed > build-result.json
-                STATUS=$(cat build-result.json | jq -r '.[0].status')
-                echo ${STATUS}
-                if [ -n "$STATUS" ];then
+
+                IS_COMPLETED=$(cat build-result.json | jq -r '.[0]')
+                if [ -n "$IS_COMPLETED" ]; then
                   break
                 fi
 
                 sleep 15
               done
+
+              STATUS=$(cat build-result.json | jq -r '.[0].status')
 
               if [ "$STATUS" == "success" ];then
                 echo "Success"
