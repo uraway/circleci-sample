@@ -5,6 +5,9 @@ jobs:
       machine: true
       steps:
         - checkout
+        - add_ssh_keys:
+              fingerprints:
+                  - 00:53:70:ec:a7:60:5c:c1:c5:9d:a2:36:eb:00:99:70
         - run: |
             git config --global user.email "circleci@example.com"
             git config --global user.name "CircleCI"
@@ -37,6 +40,7 @@ jobs:
             command: |
               while true; do
                 curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1 > build-result.json
+                cat build-result.json
                 LIFECYCLE=$(cat build-result.json | jq -r '.[0].lifecycle')
                 if [ "$LIFECYCLE" == "finished" ];then
                   STATUS=$(cat build-result.json | jq -r '.[0].status')
