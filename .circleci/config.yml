@@ -11,22 +11,26 @@ jobs:
 
         - cli/install
         - run:
-            name: 開発用Orbをパブリッシュ
-            command: circleci orb publish packed.yml uraway/hello-world@dev:${CIRCLE_SHA1} --token ${CIRCLE_TOKEN}
+            name: セットアップ
+            command: |
+              echo 'export BRANCH=INTEGRATION_TEST/${CIRCLE_SHA1}' >> $BASH_ENV
+              echo 'export TEST_REPOSITORY=hello-world-integration-test' >> $BASH_ENV
+              echo 'export ORB_REF=uraway/hello-world@dev:${CIRCLE_SHA1}' >> $BASH_ENV
+
+              git config --global user.email "circleci@example.com"
+              git config --global user.name "CircleCI"
 
         - add_ssh_keys:
               fingerprints:
                   - 00:53:70:ec:a7:60:5c:c1:c5:9d:a2:36:eb:00:99:70
-        - run: |
-            git config --global user.email "circleci@example.com"
-            git config --global user.name "CircleCI"
+
+        - run:
+            name: 開発用Orbをパブリッシュ
+            command: circleci orb publish packed.yml ${ORB_REF} --token ${CIRCLE_TOKEN}
 
         - run:
             name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
             command: |
-              export TEST_REPOSITORY=hello-world-integration-test
-              export BRANCH="INTEGRATION_TEST/${CIRCLE_SHA1}"
-
               git clone git@github.com:uraway/${TEST_REPOSITORY}.git
               cd hello-world-integration-test
               git checkout -b ${BRANCH}
@@ -34,7 +38,7 @@ jobs:
               cat \<<EOF > .circleci/config.yml
                 version: 2.1
                 orbs:
-                  hello-world: uraway/hello-world@dev:${CIRCLE_SHA1}
+                  hello-world: ${ORB_REF}
                 workflows:
                   hello-workflow:
                     jobs:
@@ -46,12 +50,12 @@ jobs:
               git push -f --set-upstream origin ${BRANCH}
 
         - run:
-            no_output_timeout: 5m
             name: ビルドが成功するまで問い合わせる
             command: |
+              echo https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1
+              which jq
               while true; do
                 curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1 > build-result.json
-                cat build-result.json
                 LIFECYCLE=$(cat build-result.json | jq -r '.[0].lifecycle')
                 if [ "$LIFECYCLE" == "finished" ];then
                   STATUS=$(cat build-result.json | jq -r '.[0].status')
