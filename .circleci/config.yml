@@ -55,18 +55,16 @@ jobs:
               echo https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1
               which jq
               while true; do
-                curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1 > build-result.json
-                LIFECYCLE=$(cat build-result.json | jq -r '.[0].lifecycle')
-                if [ "$LIFECYCLE" == "finished" ];then
-                  STATUS=$(cat build-result.json | jq -r '.[0].status')
-                  if [ "$STATUS" == "success" ];then
-                    echo "Success"
-                    exit 0
-                  else
-                    exit 1
-                  fi
+                curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed > build-result.json
+                STATUS=$(cat build-result.json | jq -r '.[0].status')
+                if [ "$STATUS" == "success" ];then
+                  echo "Success"
+                  exit 0
+                elif [ "$STATUS" == "failed" ];then
+                  echo "Failed"
+                  exit 1
                 else
-                  sleep 30
+                  sleep 5
                 fi
               done
 
