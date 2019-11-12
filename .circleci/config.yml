@@ -19,7 +19,7 @@ jobs:
             name: Test
             command: |
               result=$(circleci config process orb-test.yml | yq '.jobs."hello-world/echo_job".steps[0].run.command')
-              echo ${result}
+              echo ${result} | grep "Hello, CircleCI"
 
 workflows:
   main:
