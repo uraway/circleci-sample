@@ -12,7 +12,7 @@ jobs:
         - cli/install
         - run:
             name: 開発用Orbをパブリッシュ
-            command: circleci orb publish packed.yml dev:${CIRCLE_SHA1} --token ${CIRCLE_TOKEN}
+            command: circleci orb publish packed.yml uraway/hello-build@dev:${CIRCLE_SHA1} --token ${CIRCLE_TOKEN}
 
         - add_ssh_keys:
               fingerprints:
