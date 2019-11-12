@@ -14,10 +14,10 @@ jobs:
         - run: cat ~/.ssh/config
         - run: git clone git@github.com:uraway/protobuf-tutorial.git
         - run: rm ~/.ssh/config
-        - run: cat ~/.ssh/config
         - add_ssh_keys:
             fingerprints:
                 - 6b:e8:8a:2b:98:80:bd:60:51:46:c9:44:f7:22:12:0c
+        - run: cat ~/.ssh/config
         - run: git clone git@github.com:uraway/uraway-blog.git
 workflows:
   main:
