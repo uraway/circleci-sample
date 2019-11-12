@@ -1,0 +1,23 @@
+{
+  "name": "circleci-sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+      "xxx": "git@github.com:uraway/protobuf-tutorial.git"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uraway/circleci-sample.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uraway/circleci-sample/issues"
+  },
+  "homepage": "https://github.com/uraway/circleci-sample#readme"
+}
