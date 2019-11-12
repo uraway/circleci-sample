@@ -8,6 +8,9 @@ jobs:
       executor: cli/default
       steps:
         - checkout
+        - add_ssh_keys:
+            fingerprints:
+                - ea:cf:df:1a:e0:29:ad:4a:e0:2a:70:9c:8a:dc:7b:7a
         - run: git clone git@github.com:uraway/protobuf-tutorial.git
         - run: git clone git@github.com:uraway/uraway-blog.git
 workflows:
