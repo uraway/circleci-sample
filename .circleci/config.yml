@@ -52,21 +52,24 @@ jobs:
         - run:
             name: ビルドが成功するまで問い合わせる
             command: |
-              echo https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed
               while true; do
                 curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed > build-result.json
                 STATUS=$(cat build-result.json | jq -r '.[0].status')
                 echo ${STATUS}
-                if [ "$STATUS" == "success" ];then
-                  echo "Success"
-                  exit 0
-                elif [ "$STATUS" == "failed" ];then
-                  echo "Failed"
-                  exit 1
-                else
-                  sleep 5
+                if [ -n "$STATUS" ];then
+                  break
                 fi
+
+                sleep 15
               done
+
+              if [ "$STATUS" == "success" ];then
+                echo "Success"
+                exit 0
+              else
+                echo "Failed"
+                exit 1
+              fi
 
 workflows:
   version: 2
