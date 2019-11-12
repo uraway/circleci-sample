@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-      "xxx": "git+https://github.com/uraway/protobuf-tutorial.git#a547d7dafc4eabf7bab7f26d5a8f5a1ca49c86d0"
+      "xxx": "git@github.com:uraway/protobuf-tutorial.git"
   },
   "devDependencies": {},
   "scripts": {
