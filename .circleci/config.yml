@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 orbs:
   cli: circleci/circleci-cli@0.1.5
@@ -31,7 +31,7 @@ jobs:
               cd hello-world-integration-test
               git checkout -b ${BRANCH}
               mkdir -p .circleci
-              cat <<EOF > .circleci/config.yml
+              cat \<<EOF > .circleci/config.yml
                 version: 2.1
                 orbs:
                   hello-world: uraway/hello-world@dev:${CIRCLE_SHA1}
