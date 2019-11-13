@@ -75,7 +75,6 @@ jobs:
         - run:
             name: テスト用のブランチを削除する
             command: |
-              git branch -D ${BRANCH}
               git push origin --delete ${BRANCH}
 
 workflows:
