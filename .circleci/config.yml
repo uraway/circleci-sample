@@ -57,7 +57,7 @@ jobs:
 
                 STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
 
-                if [ -n $STOP_TIME && "$STOP_TIME" != "null" ]; then
+                if [ -n "$STOP_TIME" && "$STOP_TIME" != "null" ]; then
                   break
                 fi
 
