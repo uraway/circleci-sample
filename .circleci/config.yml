@@ -56,7 +56,6 @@ jobs:
                 curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed" > build-result.json
 
                 IS_COMPLETED=$(cat build-result.json | jq -r '.[0]')
-                echo "$IS_COMPLETED"
                 if [ "$IS_COMPLETED" != "null" ]; then
                   break
                 fi
@@ -66,12 +65,18 @@ jobs:
 
               STATUS=$(cat build-result.json | jq -r '.[0].status')
               if [ "$STATUS" == "success" ];then
-                echo "Success"
+                echo "GitHub Integration Test Success"
                 exit 0
               else
-                echo "Failed"
+                echo "GitHub Integration Test Failed"
                 exit 1
               fi
+
+        - run:
+            name: テスト用のブランチを削除する
+            command: |
+              git branch --delete ${BRANCH}
+              git push origin --delete ${BRANCH}
 
 workflows:
   version: 2
