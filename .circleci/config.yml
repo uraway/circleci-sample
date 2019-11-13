@@ -74,6 +74,7 @@ jobs:
 
         - run:
             when: always
+            working_directory: hello-world-integration-test
             name: テスト用のブランチを削除する
             command: |
               git push origin --delete ${BRANCH}
