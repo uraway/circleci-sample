@@ -73,6 +73,7 @@ jobs:
               fi
 
         - run:
+            when: always
             name: テスト用のブランチを削除する
             command: |
               git push origin --delete ${BRANCH}
