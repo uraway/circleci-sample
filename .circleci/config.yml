@@ -54,14 +54,14 @@ jobs:
             command: |
               while true; do
                 curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1" > build-result.json
-                cat build-result.json
+
                 STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
-                echo ${STOP_TIME}
-                if [ "$STOP_TIME" != "null" ]; then
+
+                if [ -n $STOP_TIME && "$STOP_TIME" != "null" ]; then
                   break
                 fi
 
-                sleep 2
+                sleep 15
               done
 
               STATUS=$(cat build-result.json | jq -r '.[0].status')
