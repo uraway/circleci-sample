@@ -1,87 +1,45 @@
-version: 2.1
-
 orbs:
-  cli: circleci/circleci-cli@0.1.5
+  orb-tools: circleci/orb-tools@8.27.4
 
-jobs:
-    test:
-      executor: cli/default
-      steps:
-        - checkout
-
-        - cli/install
-        - run:
-            name: セットアップ
-            command: |
-              echo 'export BRANCH=INTEGRATION_TEST/${CIRCLE_SHA1}' >> $BASH_ENV
-              echo 'export TEST_REPOSITORY=hello-world-integration-test' >> $BASH_ENV
-              echo 'export ORB_REF=uraway/hello-world@dev:${CIRCLE_SHA1}' >> $BASH_ENV
-
-              git config --global user.email "circleci@example.com"
-              git config --global user.name "CircleCI"
-
-        - add_ssh_keys:
-              fingerprints:
-                  - 00:53:70:ec:a7:60:5c:c1:c5:9d:a2:36:eb:00:99:70
-
-        - run:
-            name: 開発用Orbをパブリッシュ
-            command: circleci orb publish packed.yml ${ORB_REF} --token ${CIRCLE_TOKEN}
-
-        - run:
-            name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
-            command: |
-              git clone git@github.com:uraway/${TEST_REPOSITORY}.git
-              cd hello-world-integration-test
-              git checkout -b ${BRANCH}
-              mkdir -p .circleci
-              cat \<<EOF > .circleci/config.yml
-                version: 2.1
-                orbs:
-                  hello-world: ${ORB_REF}
-                workflows:
-                  hello-workflow:
-                    jobs:
-                      - hello-world/echo_job:
-                          to: CircleCI
-              EOF
-              git add .circleci/config.yml
-              git commit -m "Updates from ${CIRCLE_BUILD_URL}"
-              git push -f --set-upstream origin ${BRANCH}
-
-        - run:
-            name: ビルドが完了するまで問い合わせる
-            command: |
-              while true; do
-                curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1" > build-result.json
-
-                STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
-
-                if [ "$STOP_TIME" != "null" ]; then
-                  break
-                fi
-
-                sleep 15
-              done
-
-              STATUS=$(cat build-result.json | jq -r '.[0].status')
-              if [ "$STATUS" == "success" ];then
-                echo "GitHub Integration Test Succeeded"
-                exit 0
-              else
-                echo "GitHub Integration Test Failed"
-                exit 1
-              fi
-
-        - run:
-            when: always
-            working_directory: hello-world-integration-test
-            name: テスト用のブランチを削除する
-            command: |
-              git push origin --delete ${BRANCH}
-
+version: 2.1
 workflows:
-  version: 2
-  main:
+  promote-orb:
     jobs:
-      - test
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-patch.*/
+          orb-name: uraway/hello-world
+          release: patch
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-minor.*/
+          orb-name: uraway/hello-world
+          release: minor
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-major.*/
+          orb-name: uraway/hello-world
+          release: major
+  publish-dev:
+    jobs:
+      - orb-tools/pack
+      - orb-tools/publish-dev:
+          requires: [orb-tools/pack]
+          orb-name: uraway/hello-world
+          checkout: true
+          validate: true
+      - orb-tools/trigger-integration-workflow:
+          filters:
+            branches:
+              only: master
+          requires: [orb-tools/publish-dev]
+          tag: master
