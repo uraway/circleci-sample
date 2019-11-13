@@ -53,7 +53,7 @@ jobs:
             name: ビルドが完了するまで問い合わせる
             command: |
               while true; do
-                curl https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed > build-result.json
+                curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed" > build-result.json
 
                 IS_COMPLETED=$(cat build-result.json | jq -r '.[0]')
                 if [ -n "$IS_COMPLETED" ]; then
