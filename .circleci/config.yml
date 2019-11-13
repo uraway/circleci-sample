@@ -53,15 +53,15 @@ jobs:
             name: ビルドが完了するまで問い合わせる
             command: |
               while true; do
-                curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed" > build-result.json
-
+                curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1" > build-result.json
+                cat build-result.json
                 STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
                 echo ${STOP_TIME}
                 if [ "$STOP_TIME" != "null" ]; then
                   break
                 fi
 
-                sleep 15
+                sleep 2
               done
 
               STATUS=$(cat build-result.json | jq -r '.[0].status')
