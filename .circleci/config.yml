@@ -56,8 +56,7 @@ jobs:
                 curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed" > build-result.json
 
                 IS_COMPLETED=$(cat build-result.json | jq -r '.[0]')
-                echo "$IS_COMPLETED"
-                if [ -n "$IS_COMPLETED" ]; then
+                if [ "$IS_COMPLETED" != "$null" ]; then
                   break
                 fi
 
@@ -65,7 +64,6 @@ jobs:
               done
 
               STATUS=$(cat build-result.json | jq -r '.[0].status')
-              echo "$STATUS"
               if [ "$STATUS" == "success" ];then
                 echo "Success"
                 exit 0
