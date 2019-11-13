@@ -45,7 +45,7 @@ jobs:
                       - hello-world/echo_job:
                           to: CircleCI
               EOF
-              git add .
+              git add .circleci/config.yml
               git commit -m "Updates from ${CIRCLE_BUILD_URL}"
               git push -f --set-upstream origin ${BRANCH}
 
@@ -55,8 +55,9 @@ jobs:
               while true; do
                 curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&filter=completed" > build-result.json
 
-                IS_COMPLETED=$(cat build-result.json | jq -r '.[0]')
-                if [ "$IS_COMPLETED" != "null" ]; then
+                STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
+                echo ${STOP_TIME}
+                if [ "$STOP_TIME" != "null" ]; then
                   break
                 fi
 
@@ -65,7 +66,7 @@ jobs:
 
               STATUS=$(cat build-result.json | jq -r '.[0].status')
               if [ "$STATUS" == "success" ];then
-                echo "GitHub Integration Test Success"
+                echo "GitHub Integration Test Succeeded"
                 exit 0
               else
                 echo "GitHub Integration Test Failed"
