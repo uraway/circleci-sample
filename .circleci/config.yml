@@ -52,7 +52,7 @@ jobs:
             name: ビルドが完了するまで問い合わせる
             command: |
               while true; do
-                curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&?circle-token=$CIRCLE_TOKEN" > build-result.json
+                curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&circle-token=$CIRCLE_TOKEN" > build-result.json
                 STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
                 if [ "$STOP_TIME" != "null" ]; then
                   break
