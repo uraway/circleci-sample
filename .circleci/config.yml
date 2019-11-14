@@ -27,31 +27,31 @@ jobs:
             name: 開発用Orbをパブリッシュ
             command: circleci orb publish packed.yml ${ORB_REF} --token ${CIRCLE_TOKEN}
 
-        - run:
-            name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
-            command: |
-              git clone git@github.com:uraway/${TEST_REPOSITORY}.git
-              cd hello-world-integration-test
-              git checkout -b ${BRANCH}
-              mkdir -p .circleci
-              cat \<<EOF > .circleci/config.yml
-                version: 2.1
-                orbs:
-                  hello-world: ${ORB_REF}
-                workflows:
-                  hello-workflow:
-                    jobs:
-                      - hello-world/echo_job:
-                          to: CircleCI
-              EOF
-              git add .circleci/config.yml
-              git commit -m "Updates from ${CIRCLE_BUILD_URL}"
-              git push -f --set-upstream origin ${BRANCH}
+        #- run:
+        #    name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
+        #    command: |
+        #      git clone git@github.com:uraway/${TEST_REPOSITORY}.git
+        #      cd hello-world-integration-test
+        #      git checkout -b ${BRANCH}
+        #      mkdir -p .circleci
+        #      cat \<<EOF > .circleci/config.yml
+        #        version: 2.1
+        #        orbs:
+        #          hello-world: ${ORB_REF}
+        #        workflows:
+        #          hello-workflow:
+        #            jobs:
+        #              - hello-world/echo_job:
+        #                  to: CircleCI
+        #      EOF
+        #      git add .circleci/config.yml
+        #      git commit -m "Updates from ${CIRCLE_BUILD_URL}"
+        #      git push -f --set-upstream origin ${BRANCH}
         - run:
             name: ビルドが完了するまで問い合わせる
             command: |
               while true; do
-                touch build-result.json
+                curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1" > build-result.json
                 STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
                 if [ "$STOP_TIME" != "null" ]; then
                   break
