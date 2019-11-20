@@ -15,7 +15,7 @@ jobs:
           command: |
             echo 'export BRANCH=INTEGRATION_TEST/${CIRCLE_SHA1}' >> $BASH_ENV
             echo 'export TEST_REPOSITORY=hello-world-integration-test' >> $BASH_ENV
-            echo 'export ORB_REF=yournamespace/hello-world@dev:${CIRCLE_SHA1}' >> $BASH_ENV
+            echo 'export ORB_REF=uraway/hello-world@dev:${CIRCLE_SHA1}' >> $BASH_ENV
 
             git config --global user.email "circleci@example.com"
             git config --global user.name "CircleCI"
@@ -31,7 +31,7 @@ jobs:
       - run:
           name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
           command: |
-            git clone git@github.com:yournamespace/${TEST_REPOSITORY}.git
+            git clone git@github.com:uraway/${TEST_REPOSITORY}.git
             cd ${TEST_REPOSITORY}
             git checkout -b ${BRANCH}
             mkdir -p .circleci
@@ -53,7 +53,7 @@ jobs:
           name: ビルドが完了するまで問い合わせる
           command: |
             while true; do
-              curl "https://circleci.com/api/v1.1/project/github/yournamespace/${TEST_REPOSITORY}/tree/${BRANCH}?${CIRCLE_TOKEN}&limit=1&filter=completed" > build-result.json
+              curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?${CIRCLE_TOKEN}&limit=1&filter=completed" > build-result.json
 
               STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
               if [ "$STOP_TIME" != "null" ]; then
