@@ -28,26 +28,26 @@ jobs:
           name: 開発用Orbをパブリッシュ
           command: circleci orb publish packed.yml ${ORB_REF} --token ${CIRCLE_TOKEN}
 
-      - run:
-          name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
-          command: |
-            git clone git@github.com:uraway/${TEST_REPOSITORY}.git
-            cd ${TEST_REPOSITORY}
-            git checkout -b ${BRANCH}
-            mkdir -p .circleci
-            cat \<<EOF > .circleci/config.yml
-              version: 2.1
-              orbs:
-                hello-world: ${ORB_REF}
-              workflows:
-                hello-workflow:
-                  jobs:
-                    - hello-world/echo_job:
-                        to: CircleCI
-            EOF
-            git add .
-            git commit -m "Updates from ${CIRCLE_BUILD_URL}"
-            git push -f --set-upstream origin ${BRANCH}
+      #- run:
+      #    name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
+      #    command: |
+      #      git clone git@github.com:uraway/${TEST_REPOSITORY}.git
+      #      cd ${TEST_REPOSITORY}
+      #      git checkout -b ${BRANCH}
+      #      mkdir -p .circleci
+      #      cat \<<EOF > .circleci/config.yml
+      #        version: 2.1
+      #        orbs:
+      #          hello-world: ${ORB_REF}
+      #        workflows:
+      #          hello-workflow:
+      #            jobs:
+      #              - hello-world/echo_job:
+      #                  to: CircleCI
+      #      EOF
+      #      git add .
+      #      git commit -m "Updates from ${CIRCLE_BUILD_URL}"
+      #      git push -f --set-upstream origin ${BRANCH}
 
       - run:
           name: ビルドが完了するまで問い合わせる
@@ -56,26 +56,26 @@ jobs:
 
             sleep 30
 
-            while true; do
-              curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?${CIRCLE_TOKEN}&limit=1&filter=completed" > build-result.json
-
-              STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
-              if [ "$STOP_TIME" != "null" ]; then
-                break
-              fi
-
-
-              sleep 15
-            done
-
-            STATUS=$(cat build-result.json | jq -r '.[0].status')
-            if [ "$STATUS" == "success" ];then
-              echo "GitHub Integration Test Succeeded"
-              exit 0
-            else
-              echo "GitHub Integration Test Failed"
-              exit 1
-            fi
+            #while true; do
+            #  curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?${CIRCLE_TOKEN}&limit=1&filter=completed" > build-result.json
+#
+            #  STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
+            #  if [ "$STOP_TIME" != "null" ]; then
+            #    break
+            #  fi
+#
+#
+            #  sleep 15
+            #done
+#
+            #STATUS=$(cat build-result.json | jq -r '.[0].status')
+            #if [ "$STATUS" == "success" ];then
+            #  echo "GitHub Integration Test Succeeded"
+            #  exit 0
+            #else
+            #  echo "GitHub Integration Test Failed"
+            #  exit 1
+            #fi
 
       - run:
           when: always
