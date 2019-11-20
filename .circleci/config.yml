@@ -1,78 +1,85 @@
-
 version: 2.1
 
 orbs:
   cli: circleci/circleci-cli@0.1.5
 
 jobs:
-    test:
-      executor: cli/default
-      steps:
-        - checkout
+  test:
+    executor: cli/default
+    steps:
+      - checkout
 
-        - cli/install
-        - run:
-            name: セットアップ
-            command: |
-              echo 'export BRANCH=INTEGRATION_TEST/${CIRCLE_SHA1}' >> $BASH_ENV
-              echo 'export TEST_REPOSITORY=hello-world-integration-test' >> $BASH_ENV
-              echo 'export ORB_REF=uraway/hello-world@dev:${CIRCLE_SHA1}' >> $BASH_ENV
-              git config --global user.email "circleci@example.com"
-              git config --global user.name "CircleCI"
+      - cli/install
+      - run:
+          name: セットアップ
+          command: |
+            echo 'export BRANCH=INTEGRATION_TEST/${CIRCLE_SHA1}' >> $BASH_ENV
+            echo 'export TEST_REPOSITORY=hello-world-integration-test' >> $BASH_ENV
+            echo 'export ORB_REF=yournamespace/hello-world@dev:${CIRCLE_SHA1}' >> $BASH_ENV
 
-        - add_ssh_keys:
-              fingerprints:
-                  - 00:53:70:ec:a7:60:5c:c1:c5:9d:a2:36:eb:00:99:70
+            git config --global user.email "circleci@example.com"
+            git config --global user.name "CircleCI"
 
-        - run:
-            name: 開発用Orbをパブリッシュ
-            command: circleci orb publish packed.yml ${ORB_REF} --token ${CIRCLE_TOKEN}
+      - add_ssh_keys:
+          fingerprints:
+            - "SO:ME:FIN:G:ER:PR:IN:T"
 
-        - run:
-            name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
-            command: |
-              git clone git@github.com:uraway/${TEST_REPOSITORY}.git
-              cd hello-world-integration-test
-              git checkout -b ${BRANCH}
-              mkdir -p .circleci
-              cat \<<EOF > .circleci/config.yml
-                version: 2.1
-                orbs:
-                  hello-world: ${ORB_REF}
-                workflows:
-                  hello-workflow:
-                    jobs:
-                      - hello-world/echo_job:
-                          to: CircleCI
-              EOF
-              git add .circleci/config.yml
-              git commit -m "Updates from ${CIRCLE_BUILD_URL}"
-              git push -f --set-upstream origin ${BRANCH}
-        - run:
-            name: ビルドが完了するまで問い合わせる
-            command: |
-              while true; do
-                curl "https://circleci.com/api/v1.1/project/github/uraway/${TEST_REPOSITORY}/tree/${BRANCH}?limit=1&circle-token=$CIRCLE_TOKEN" > build-result.json
-                STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
-                if [ "$STOP_TIME" != "null" ]; then
-                  break
-                fi
-                sleep 15
-              done
-              STATUS=$(cat build-result.json | jq -r '.[0].status')
-              if [ "$STATUS" == "success" ];then
-                echo "GitHub Integration Test Succeeded"
-                exit 0
-              else
-                echo "GitHub Integration Test Failed"
-                exit 1
+      - run:
+          name: 開発用Orbをパブリッシュ
+          command: circleci orb publish packed.yml ${ORB_REF} --token ${CIRCLE_TOKEN}
+
+      - run:
+          name: 直前にパブリッシュした開発用Orbを使って、別リポジトリのビルドを開始する
+          command: |
+            git clone git@github.com:yournamespace/${TEST_REPOSITORY}.git
+            cd ${TEST_REPOSITORY}
+            git checkout -b ${BRANCH}
+            mkdir -p .circleci
+            cat \<<EOF > .circleci/config.yml
+              version: 2.1
+              orbs:
+                hello-world: ${ORB_REF}
+              workflows:
+                hello-workflow:
+                  jobs:
+                    - hello-world/echo_job:
+                        to: CircleCI
+            EOF
+            git add .
+            git commit -m "Updates from ${CIRCLE_BUILD_URL}"
+            git push -f --set-upstream origin ${BRANCH}
+
+      - run:
+          name: ビルドが完了するまで問い合わせる
+          command: |
+            while true; do
+              curl "https://circleci.com/api/v1.1/project/github/yournamespace/${TEST_REPOSITORY}/tree/${BRANCH}?${CIRCLE_TOKEN}&limit=1&filter=completed" > build-result.json
+
+              STOP_TIME=$(cat build-result.json | jq -r '.[0].stop_time')
+              if [ "$STOP_TIME" != "null" ]; then
+                break
               fi
-        - run:
-            when: always
-            working_directory: hello-world-integration-test
-            name: テスト用のブランチを削除する
-            command: |
-              git push origin --delete ${BRANCH}
+
+
+              sleep 15
+            done
+
+            STATUS=$(cat build-result.json | jq -r '.[0].status')
+            if [ "$STATUS" == "success" ];then
+              echo "GitHub Integration Test Succeeded"
+              exit 0
+            else
+              echo "GitHub Integration Test Failed"
+              exit 1
+            fi
+
+      - run:
+          when: always
+          working_directory: hello-world-integration-test
+          name: テスト用のブランチを削除する
+          command: |
+            git push origin --delete ${BRANCH}
+
 workflows:
   version: 2
   main:
