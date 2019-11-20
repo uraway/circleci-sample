@@ -22,7 +22,7 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - ea:cf:df:1a:e0:29:ad:4a:e0:2a:70:9c:8a:dc:7b:7a
+            - 6b:e8:8a:2b:98:80:bd:60:51:46:c9:44:f7:22:12:0c
 
       - run:
           name: 開発用Orbをパブリッシュ
