@@ -20,20 +20,26 @@ jobs:
             - go-module-v2-{{ checksum "go.sum" }}
             - go-module-v2-
 
-      - run: go mod download -json
+      - run:
+          name: Download modules
+          command: |
+            go mod download -json
 
       - save_cache:
           key: go-module-v2-{{ checksum "go.sum" }}
           paths:
             - /go/pkg/mod
 
-      - run: go get github.com/jstemmer/go-junit-report
+      - run:
+          name: Create tmp dir
+          command: |
+            mkdir -p /tmp/test-results/go-test
 
-      - run: mkdir -p /tmp/test-results/go-test
-
-      - run: curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s v1.21.0
-
-      - run: ./bin/golangci-lint run --out-format junit-xml > /tmp/test-results/golangci-lint/result.xml
+      - run:
+          name: Run golangci-lint
+          command: |
+            curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s v1.21.0
+            ./bin/golangci-lint run --out-format junit-xml > /tmp/test-results/golangci-lint/result.xml
 
       - run:
           name: Waiting for DB to be ready
@@ -46,7 +52,15 @@ jobs:
             done
             echo Failed waiting for DB && exit 1
 
-      - run: go test -v 2>&1 | go-junit-report > /tmp/test-results/go-test/result.xml
+      - run:
+          name: Prepare for test
+          command: |
+            go get github.com/jstemmer/go-junit-report
+
+      - run:
+          name: Run go test
+          command: |
+            go test -v 2>&1 | go-junit-report > /tmp/test-results/go-test/result.xml
 
       - store_artifacts:
           path: /tmp/test-results
