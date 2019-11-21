@@ -20,7 +20,7 @@ jobs:
             - go-module-v1-{{ checksum "go.sum" }}
             - go-module-v1-
 
-      - run: go mod download
+      - run: go mod download -json
 
       - save_cache:
           key: go-module-v1-{{ checksum "go.sum" }}
