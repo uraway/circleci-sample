@@ -25,7 +25,7 @@ jobs:
       - save_cache:
           key: go-module-v1-{{ checksum "go.sum" }}
           paths:
-            - /pkg/mod
+            - /go/pkg/mod
 
       - run: go get github.com/jstemmer/go-junit-report
 
