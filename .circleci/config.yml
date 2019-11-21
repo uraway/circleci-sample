@@ -34,6 +34,7 @@ jobs:
           name: Create tmp dir
           command: |
             mkdir -p /tmp/test-results/go-test
+            mkdir -p /tmp/test-results/golangci-lint
 
       - run:
           name: Run golangci-lint
