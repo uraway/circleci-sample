@@ -56,7 +56,7 @@ jobs:
       - run:
           name: Run go test
           environment:
-            DATABASE_URL: "root@localhost:3306/circle_test"
+            DATABASE_URL: "root@(localhost:3306)/circle_test"
             GIN_MODE: test
           command: |
             go test
