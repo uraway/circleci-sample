@@ -31,7 +31,7 @@ func setupRouter() *gin.Engine {
 
 func setupDB() (*gorm.DB, error) {
 	// user:password@(localhost)/dbname?charset=utf8&parseTime=True&loc=Local
-	database, err := gorm.Open("mysql", os.Getenv("MYSQL_USER")+":"+os.Getenv("MYSQL_PASS")+"@("+os.Getenv("MYSQL_HOST")+")/"+os.Getenv("MYSQL_DATABASE")+"?charset=utf8&parseTime=True&loc=Local")
+	database, err := gorm.Open("mysql", os.Getenv("DATABASE_URL")+"?charset=utf8&parseTime=True&loc=Local")
 
 	if err == nil {
 		database.AutoMigrate(&Product{})
