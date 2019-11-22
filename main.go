@@ -57,6 +57,7 @@ func main() {
 	defer db.Close()
 
 	r := setupRouter()
+	gin.SetMode(gin.ReleaseMode)
 	err = r.Run()
 	if err != nil {
 		log.Fatal(err)
