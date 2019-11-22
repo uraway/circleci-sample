@@ -59,8 +59,7 @@ jobs:
             DATABASE_URL: "root@(localhost:3306)/circle_test"
             GIN_MODE: test
           command: |
-            go test
-            go test -v 2>&1 | go-junit-report > /tmp/test-results/go-test/result.xml
+            go test -v 2>&1 | go-junit-report | tee /tmp/test-results/go-test/result.xml
 
       - store_artifacts:
           path: /tmp/test-results
