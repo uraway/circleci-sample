@@ -57,6 +57,7 @@ jobs:
           name: Run go test
           environment:
             DATABSE_URL: "root@localhost:3306/circle_test"
+            GIN_MODE: test
           command: |
             go test -v 2>&1 | go-junit-report > /tmp/test-results/go-test/result.xml
 
