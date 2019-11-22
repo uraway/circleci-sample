@@ -57,7 +57,10 @@ func main() {
 	defer db.Close()
 
 	r := setupRouter()
-	r.Run()
+	err = r.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // fetchAllProducts fetch all products

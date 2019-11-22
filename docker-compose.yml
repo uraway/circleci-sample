@@ -11,10 +11,7 @@ services:
   app:
     build: .
     environment:
-      MYSQL_DATABASE: dev_db
-      MYSQL_HOST: db
-      MYSQL_USER: root
-      MYSQL_PASS: ""
+      DATABASE_URL: "root@tcp(db:3306)/dev_db"
     volumes:
       - .:/go/src/project
       - ./mod:/go/pkg/mod
