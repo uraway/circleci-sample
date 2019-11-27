@@ -48,9 +48,7 @@ jobs:
             done
             echo Failed waiting for DB && exit 1
 
-      - run:
-          name: Prepare for test
-          command: |
+      - deploy: |
             go get github.com/jstemmer/go-junit-report
 
       - run:
