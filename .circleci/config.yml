@@ -16,7 +16,7 @@ jobs:
 
       - run: sudo docker-php-ext-install pdo_mysql
 
-      - run: chown -R $USER:$USER ~/project/src
+      - run: chown -R circleci:circleci ~/project/src
       # Download and cache dependencies
 
       # composer cache
