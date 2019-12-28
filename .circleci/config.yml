@@ -4,10 +4,36 @@ jobs:
     docker:
       - image: busybox
     steps:
-      - run: circleci step halt
+      - run: echo "Hello" > hello.txt
+      - save_cache:
+          paths:
+            - hello.txt
+          key: v1-hello-{{ .BuildNum }}
+  compile:
+    docker:
+      - image: busybox
+    steps:
+      - run: echo "World" > world.txt
+      - save_cache:
+          paths:
+            - world.txt
+          key: v1-world-{{ .BuildNum }}
+  deploy:
+    docker:
+      - image: busybox
+    steps:
+      - restore_cache:
+          key: v1-hello-{{ .BuildNum }}
+      - restore_cache:
+          key: v1-world-{{ .BuildNum }}
+      - run: cat hello.txt && cat world.txt
 
 workflows:
-  version: 2
-  main:
-    jobs:
-    - build
+    version: 2
+    main:
+      jobs:
+        - build
+        - compile:
+            requires: [build]
+        - deploy:
+            requires: [compile]
