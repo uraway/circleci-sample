@@ -5,28 +5,25 @@ jobs:
       - image: circleci/node
     steps:
       - run: echo "Hello" > hello.txt
-      - run: pwd
-      - save_cache:
-          paths:
-            - ~/project/hello.txt
-          key: v1-hello-{{ .Revision }}
+      - persist_to_workspace:
+            root: ./
+            paths:
+                - hello.txt
   compile:
     docker:
       - image: circleci/node
     steps:
       - run: echo "World" > world.txt
-      - save_cache:
-          paths:
-            - ~/project/world.txt
-          key: v1-world-{{ .Revision }}
+      - persist_to_workspace:
+            root: ./
+            paths:
+                - world.txt
   deploy:
     docker:
       - image: circleci/node
     steps:
-      - restore_cache:
-          key: v1-hello-{{ .Revision }}
-      - restore_cache:
-          key: v1-world-{{ .Revision }}
+      - attach_workspace:
+            at: ./
       - run: cat hello.txt && cat world.txt
 
 workflows:
