@@ -7,7 +7,7 @@ jobs:
       - run: echo "Hello" > hello.txt
       - save_cache:
           paths:
-            - hello.txt
+            - ~/project/hello.txt
           key: v1-hello-{{ .BuildNum }}
   compile:
     docker:
@@ -16,7 +16,7 @@ jobs:
       - run: echo "World" > world.txt
       - save_cache:
           paths:
-            - world.txt
+            - ~/project/world.txt
           key: v1-world-{{ .BuildNum }}
   deploy:
     docker:
