@@ -9,7 +9,7 @@ jobs:
       - save_cache:
           paths:
             - ~/project/hello.txt
-          key: v1-hello-{{ .BuildNum }}
+          key: v1-hello-{{ .Revision }}
   compile:
     docker:
       - image: circleci/node
@@ -18,15 +18,15 @@ jobs:
       - save_cache:
           paths:
             - ~/project/world.txt
-          key: v1-world-{{ .BuildNum }}
+          key: v1-world-{{ .Revision }}
   deploy:
     docker:
       - image: circleci/node
     steps:
       - restore_cache:
-          key: v1-hello-{{ .BuildNum }}
+          key: v1-hello-{{ .Revision }}
       - restore_cache:
-          key: v1-world-{{ .BuildNum }}
+          key: v1-world-{{ .Revision }}
       - run: cat hello.txt && cat world.txt
 
 workflows:
