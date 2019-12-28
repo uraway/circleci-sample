@@ -5,6 +5,7 @@ jobs:
       - image: busybox
     steps:
       - run: echo "Hello" > hello.txt
+      - run: pwd
       - save_cache:
           paths:
             - ~/project/hello.txt
