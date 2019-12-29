@@ -1,37 +1,16 @@
-version: 2.1
+version: 2
+
 jobs:
   build:
     docker:
-      - image: circleci/node
+      - image: busybox
     steps:
-      - run: echo "Hello" > hello.txt
-      - persist_to_workspace:
-            root: ./
-            paths:
-                - hello.txt
-  compile:
-    docker:
-      - image: circleci/node
-    steps:
-      - run: echo "World" > world.txt
-      - persist_to_workspace:
-            root: ./
-            paths:
-                - world.txt
-  deploy:
-    docker:
-      - image: circleci/node
-    steps:
-      - attach_workspace:
-            at: ./
-      - run: cat hello.txt && cat world.txt
+      - run:
+          echo 'Hello World' >> README.md
+          cat README.md
 
 workflows:
-    version: 2
-    main:
-      jobs:
-        - build
-        - compile:
-            requires: [build]
-        - deploy:
-            requires: [compile]
+  version: 2
+  "Hello Workflow":
+    jobs:
+      - build
