@@ -2,8 +2,7 @@ version: 2
 
 jobs:
   build:
-    docker:
-      - image: busybox
+    machine: true
     steps:
       - run:
           echo 'Hello World' >> README.md
