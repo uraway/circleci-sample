@@ -1,16 +1,36 @@
-version: 2
+version: 2.1
 
 jobs:
   build:
-    machine:
-      image: ubuntu-1604:201903-01
+    machine: true
     steps:
-      - run:
-          echo 'Hello World' >> README.md
-          cat README.md
+      - checkout
+      - save_cache:
+            paths:
+                - ~/project
+            key: v1-cache-{{ .Revision }}
+  test:
+    machine: true
+    steps:
+      - checkout
+      - save_cache:
+            paths:
+                - ~/project
+            key: v1-cache-{{ .Revision }}
+  deploy:
+    machine: true
+    steps:
+      - restore_cache:
+            key: v1-cache-{{ .Revision }}
 
 workflows:
-  version: 2
-  "Hello Workflow":
-    jobs:
-      - build
+    workflow:
+        jobs:
+            - build
+            - test:
+                requires:
+                    - build
+            - deploy:
+                requires:
+                    - test
+
