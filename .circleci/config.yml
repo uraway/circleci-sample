@@ -1,36 +1,8 @@
-version: 2.1
+version: 2.0
 
 jobs:
-  build:
-    machine: true
-    steps:
-      - checkout
-      - save_cache:
-            paths:
-                - ~/project
-            key: v1-cache-{{ .Revision }}
-  test:
-    machine: true
-    steps:
-      - checkout
-      - save_cache:
-            paths:
-                - ~/project
-            key: v1-cache-{{ .Revision }}
-  deploy:
-    machine: true
-    steps:
-      - restore_cache:
-            key: v1-cache-{{ .Revision }}
-
-workflows:
-    workflow:
-        jobs:
-            - build
-            - test:
-                requires:
-                    - build
-            - deploy:
-                requires:
-                    - test
-
+    build:
+        docker:
+            - image: busybox
+        steps:
+            - run: echo "hello world"
