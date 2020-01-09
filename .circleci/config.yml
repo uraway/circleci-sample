@@ -21,7 +21,7 @@ jobs:
             - image: alpine
         steps:
             - run: echo "test_2" > foo.bin
-            - run: apt-get update && apt-get install -y ca-certificates
+            - run: apk add --no-cache ca-certificates
             - persist_to_workspace:
                 root: ./
                 paths:
