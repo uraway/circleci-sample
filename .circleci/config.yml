@@ -12,20 +12,22 @@ jobs:
         steps:
             - run: echo "test_1" > foo.bin
             - run: ls -al
+            - run: apk add ca-certificates
             - persist_to_workspace:
                 root: ./
                 paths:
-                  - "*.bin"
+                  - "foo.bin"
     test_2:
         docker:
             - image: busybox
         steps:
             - run: echo "test_2" > foo.bin
             - run: ls -al
+            - run: apk add ca-certificates
             - persist_to_workspace:
                 root: ./
                 paths:
-                  - "*.bin"
+                  - "foo.bin"
     deploy:
         docker:
             - image: busybox
