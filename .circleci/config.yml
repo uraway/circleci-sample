@@ -3,22 +3,22 @@ version: 2
 jobs:
     install_deps:
         docker:
-            - image: busybox
+            - image: alpine
         steps:
             - run: echo "Install Deps"
     test_1:
         docker:
-            - image: busybox
+            - image: alpine
         steps:
             - run: echo "test_1" > foo.bin
-            - run: apt-get update && apt-get install -y ca-certificates
+            - run: apk add --no-cache ca-certificates
             - persist_to_workspace:
                 root: ./
                 paths:
                   - "foo.bin"
     test_2:
         docker:
-            - image: busybox
+            - image: alpine
         steps:
             - run: echo "test_2" > foo.bin
             - run: apt-get update && apt-get install -y ca-certificates
@@ -28,7 +28,7 @@ jobs:
                   - "foo.bin"
     deploy:
         docker:
-            - image: busybox
+            - image: alpine
         steps:
             - attach_workspace:
                   at: ./
