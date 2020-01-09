@@ -11,8 +11,7 @@ jobs:
             - image: busybox
         steps:
             - run: echo "test_1" > foo.bin
-            - run: ls -al
-            - run: apk add ca-certificates
+            - run: apt-get update && apt-get install -y ca-certificates
             - persist_to_workspace:
                 root: ./
                 paths:
@@ -22,8 +21,7 @@ jobs:
             - image: busybox
         steps:
             - run: echo "test_2" > foo.bin
-            - run: ls -al
-            - run: apk add ca-certificates
+            - run: apt-get update && apt-get install -y ca-certificates
             - persist_to_workspace:
                 root: ./
                 paths:
