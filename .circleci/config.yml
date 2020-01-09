@@ -20,10 +20,10 @@ jobs:
             - image: busybox
         steps:
             - run: echo "test_2" > foo.bin
-            - persist_to_workspace:
-                root: ./
-                paths:
-                  - foo.bin
+            #- persist_to_workspace:
+            #    root: ./
+            #    paths:
+            #      - foo.bin
     deploy:
         docker:
             - image: busybox
