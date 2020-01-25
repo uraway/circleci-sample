@@ -1,0 +1,3 @@
+# src/executors/default.yml
+docker:
+  - image: busybox

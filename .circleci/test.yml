@@ -1,0 +1,11 @@
+# .circleci/test.yml
+version: 2.1
+
+orbs:
+  hello-world: uraway/hello-world@dev:alpha
+
+workflows:
+  hello-workflow:
+    jobs:
+      - hello-world/echo-job:
+          to: CircleCI

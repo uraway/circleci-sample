@@ -1,13 +1,115 @@
+default_filters: &default_filters
+  branches:
+    only: /.*/
+  tags:
+    only: /.*/
+
 version: 2.1
+
+orbs:
+  cli: circleci/circleci-cli@0.1.5
+
 jobs:
-  build:
-    docker:
-      - image: busybox
+  validation:
+    executor: cli/default
     steps:
-      - run: circleci step halt
+      - cli/install
+      - checkout
+      - run:
+          name: バリデーション
+          command: circleci orb validate ./src/orb.yml
+
+  expansion:
+    executor: cli/default
+    steps:
+      - cli/install
+      - checkout
+      - run:
+          name: Install yq
+          command: |
+            sudo apt update && \
+            sudo apt-get install jq python-pip python-dev && \
+            sudo pip install yq
+      - run:
+          name: 展開テスト
+          command: |
+            result=$(circleci config process .circleci/test.yml | yq '.jobs."hello-world/echo-job".steps[0].run.command')
+            echo ${result} | grep "Hello, CircleCI"
+
+  execution:
+      machine: true
+      steps:
+        - cli/install
+        - checkout
+        - run:
+            name: 展開
+            command: circleci config process .circleci/test.yml > .circleci/2.0.yml
+        - run:
+            name: ランタイムテスト
+            command: circleci local execute --config .circleci/2.0.yml --job hello-world/echo-job | tee local_build_output.txt /dev/stderr | tail -n 1 | grep "Success"
+
+  publish-dev:
+    executor: cli/default
+    steps:
+      - cli/install
+      - checkout
+      - run:
+          name: dev:alphaを公開
+          command: circleci orb publish src/orb.yml uraway/hello-world@dev:alpha --token ${CIRCLE_TOKEN}
+
+  dev-promote-prod:
+    parameters:
+      release:
+        type: enum
+        enum: [patch, minor, major]
+        default: patch
+        description: circleci orb publish promoteコマンドの引数
+    executor: cli/default
+    steps:
+      - cli/install
+      - checkout
+      - run:
+          name: dev:alphaを本番用Orbsへプロモートする
+          command: circleci orb publish promote uraway/hello-world@dev:alpha << parameters.release >> --token ${CIRCLE_TOKEN}
 
 workflows:
-  version: 2
   main:
     jobs:
-    - build
+      - validation:
+          filters:
+            *default_filters
+      - publish-dev:
+          filters:
+            *default_filters
+      - expansion:
+          requires: [publish-dev]
+          filters:
+            *default_filters
+      - execution:
+          requires: [publish-dev]
+          filters:
+            *default_filters
+      - dev-promote-prod:
+          requires: [validation, expansion, execution]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /patch.*/
+          release: patch
+      - dev-promote-prod:
+          requires: [validation, expansion, execution]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /minor.*/
+          release: minor
+      - dev-promote-prod:
+          requires: [validation, expansion, execution]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /major.*/
+          release: major
