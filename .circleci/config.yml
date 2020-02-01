@@ -2,9 +2,9 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: busybox
+      - image: alpine
     steps:
-      - run: apk update && apk add ca-certificates
+      #- run: apk update && apk add ca-certificates
       - run: echo "Hello" > hello.bin
       - persist_to_workspace:
             root: ./
@@ -12,9 +12,9 @@ jobs:
               - hello.bin
   test:
     docker:
-      - image: busybox
+      - image: alpine
     steps:
-      - run: apk update && apk add ca-certificates
+      #- run: apk update && apk add ca-certificates
       - attach_workspace:
           at: ./
       - run: echo "World" > hello.bin
@@ -24,9 +24,9 @@ jobs:
               - hello.bin
   deploy:
     docker:
-      - image: busybox
+      - image: alpine
     steps:
-      - run: apk update && apk add ca-certificates
+      #- run: apk update && apk add ca-certificates
       - attach_workspace:
           at: ./
       - run: cat hello.bin
