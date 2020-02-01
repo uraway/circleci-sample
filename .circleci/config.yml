@@ -4,10 +4,37 @@ jobs:
     docker:
       - image: busybox
     steps:
-      - run: circleci step halt
-
+      - run: echo "Hello" > hello.bin
+      - persist_to_workspace:
+            root: ./
+            paths:
+              - hello.bin
+  test:
+    docker:
+      - image: busybox
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: echo "World" > hello.bin
+      - persist_to_workspace:
+            root: ./
+            paths:
+              - hello.bin
+  deploy:
+    docker:
+      - image: busybox
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: cat hello.bin
 workflows:
   version: 2
   main:
     jobs:
-    - build
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
