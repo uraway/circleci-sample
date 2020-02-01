@@ -4,6 +4,7 @@ jobs:
     docker:
       - image: busybox
     steps:
+      - run: apk update && apk add ca-certificates
       - run: echo "Hello" > hello.bin
       - persist_to_workspace:
             root: ./
@@ -13,6 +14,7 @@ jobs:
     docker:
       - image: busybox
     steps:
+      - run: apk update && apk add ca-certificates
       - attach_workspace:
           at: ./
       - run: echo "World" > hello.bin
@@ -24,6 +26,7 @@ jobs:
     docker:
       - image: busybox
     steps:
+      - run: apk update && apk add ca-certificates
       - attach_workspace:
           at: ./
       - run: cat hello.bin
