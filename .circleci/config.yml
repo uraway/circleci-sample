@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: alpine
+      - image: debian:stretch
     steps:
       #- run: apk update && apk add ca-certificates
       - run: echo "Hello" > hello.bin
@@ -12,7 +12,7 @@ jobs:
               - hello.bin
   test:
     docker:
-      - image: alpine
+      - image: debian:stretch
     steps:
       #- run: apk update && apk add ca-certificates
       - attach_workspace:
@@ -24,7 +24,7 @@ jobs:
               - hello.bin
   deploy:
     docker:
-      - image: alpine
+      - image: debian:stretch
     steps:
       #- run: apk update && apk add ca-certificates
       - attach_workspace:
