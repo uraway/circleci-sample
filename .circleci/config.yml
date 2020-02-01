@@ -4,10 +4,10 @@ jobs:
     docker:
       - image: debian
     steps:
+      - run: apt-get update && apt-get install -y ca-certificates
       - restore_cache:
           keys:
             - v1-debian
-      #- run: apt-get update && apt-get install -y ca-certificates
       - run: cat hello.bin
       - run: echo "${CIRCLE_BUILD_NUM}" > hello.bin
       - save_cache:
