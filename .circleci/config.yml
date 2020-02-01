@@ -2,12 +2,20 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: busybox
+      - image: debian
     steps:
-      - run: circleci step halt
-
+      - restore_cache:
+          keys:
+            - v1-debian
+      #- run: apt-get update && apt-get install -y ca-certificates
+      - run: cat hello.bin
+      - run: echo "${CIRCLE_BUILD_NUM}" > hello.bin
+      - save_cache:
+            paths:
+              - hello.bin
+            key: v1-debian
 workflows:
   version: 2
   main:
     jobs:
-    - build
+      - build
