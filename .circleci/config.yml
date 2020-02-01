@@ -2,12 +2,42 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: busybox
+      - image: debian
     steps:
-      - run: circleci step halt
-
+      - run: apt-get update && apt-get install -y ca-certificates
+      - run: echo "Hello" > hello.bin
+      - persist_to_workspace:
+            root: ./
+            paths:
+              - hello.bin
+  test:
+    docker:
+      - image: debian
+    steps:
+      - run: apt-get update && apt-get install -y ca-certificates
+      - attach_workspace:
+          at: ./
+      - run: echo "World" > hello.bin
+      - persist_to_workspace:
+            root: ./
+            paths:
+              - hello.bin
+  deploy:
+    docker:
+      - image: debian
+    steps:
+      - run: apt-get update && apt-get install -y ca-certificates
+      - attach_workspace:
+          at: ./
+      - run: cat hello.bin
 workflows:
   version: 2
   main:
     jobs:
-    - build
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
