@@ -117,7 +117,6 @@ workflows:
           image-tag: '13.9.0'
   main:
     when: << pipeline.parameters.run-main-workflow >>
-    name: Node version v<< pipeline.parameters.image-tag >>
     jobs:
       - install_deps
       - lint_and_test:
