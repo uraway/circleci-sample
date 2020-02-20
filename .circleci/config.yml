@@ -98,8 +98,7 @@ jobs:
           command: |
             VCS_TYPE=$(echo ${CIRCLE_BUILD_URL} | cut -d '/' -f 4)
 
-            curl -u ${CIRCLE_TOKEN}: -X POST --header
-            "Content-Type: application/json" -d "{
+            curl -u ${CIRCLE_TOKEN}: -X POST --header "Content-Type: application/json" -d "{
               \"branch\": \"${CIRCLE_BRANCH}\",
               \"parameters\": {\"run-main-workflow\": true, \"image-tag\":\"<< parameters.image-tag >>\"}
             }" "https://circleci.com/api/v2/project/${VCS_TYPE}/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline"
@@ -111,11 +110,14 @@ workflows:
     unless: << pipeline.parameters.run-main-workflow >>
     jobs:
       - trigger-jobs:
-          image-tag: '12.16.1' # LTSリリース
+          name: LTSリリース
+          image-tag: '12.16.1'
       - trigger-jobs:
-          image-tag: '13.9.0' # 最新リリース
+          name: 最新リリース
+          image-tag: '13.9.0'
   main:
     when: << pipeline.parameters.run-main-workflow >>
+    name: Node version v<< pipeline.parameters.image-tag >>
     jobs:
       - install_deps
       - lint_and_test:
