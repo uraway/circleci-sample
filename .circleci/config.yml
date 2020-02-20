@@ -33,7 +33,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
 
       - persist_to_workspace:
-          root: ~/repo
+          root: ~/project
           paths:
             - build/*
             - node_modules/*
@@ -44,7 +44,7 @@ jobs:
       - checkout
 
       - attach_workspace:
-          at: ~/repo
+          at: ~/project
 
       - run:
           name: 静的解析、テスト結果ファイルを出力するディレクトリを作成
@@ -80,7 +80,7 @@ jobs:
       - checkout
 
       - attach_workspace:
-          at: ~/repo
+          at: ~/project
 
       - run:
           name: TypeScriptコードをビルド
