@@ -114,7 +114,7 @@ workflows:
           image-tag: '12.16.1'
       - trigger-jobs:
           name: 最新リリース
-          image-tag: '13.9.0'
+          image-tag: 'latest'
   main:
     when: << pipeline.parameters.run-main-workflow >>
     jobs:
