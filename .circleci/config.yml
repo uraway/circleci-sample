@@ -111,7 +111,7 @@ workflows:
     jobs:
       - trigger-jobs:
           name: LTSリリース
-          image-tag: '12.16.1'
+          image-tag: '12'
       - trigger-jobs:
           name: 最新リリース
           image-tag: 'latest'
