@@ -12,27 +12,27 @@ jobs:
         steps:
             - run: echo "test_1" > foo.bin
             - run: apk add --no-cache ca-certificates
-            - persist_to_workspace:
-                root: ./
-                paths:
-                  - "foo.bin"
+            - save_cache:
+                  paths:
+                    -  foo.bin
+                  key: foo.bin-{{ .Revision }}
     test_2:
         docker:
             - image: alpine
         steps:
             - run: echo "test_2" > foo.bin
             - run: apk add --no-cache ca-certificates
-            - persist_to_workspace:
-                root: ./
-                paths:
-                  - "foo.bin"
+            - save_cache:
+                  paths:
+                    -  foo.bin
+                  key: foo.bin-{{ .Revision }}
     deploy:
         docker:
             - image: alpine
         steps:
-            - attach_workspace:
-                  at: ./
-            - run: echo "Install Deps"
+            - restore_cache:
+                key: foo.bin-{{ .Revision }}
+            - run: cat foo.bin
 
 workflows:
   version: 2
