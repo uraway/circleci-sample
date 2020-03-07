@@ -1,13 +1,51 @@
-version: 2.1
+version: 2
+
 jobs:
-  build:
-    docker:
-      - image: busybox
-    steps:
-      - run: circleci step halt
+    install_deps:
+        docker:
+            - image: alpine
+        steps:
+            - run: echo "Install Deps"
+    test_1:
+        docker:
+            - image: alpine
+        steps:
+            - run: echo "test_1" > foo.bin
+            - run: apk add --no-cache ca-certificates
+            - save_cache:
+                  paths:
+                    -  foo.bin
+                  key: foo.bin-{{ .Revision }}
+    test_2:
+        docker:
+            - image: alpine
+        steps:
+            - run: echo "test_2" > foo.bin
+            - run: apk add --no-cache ca-certificates
+            - save_cache:
+                  paths:
+                    -  foo.bin
+                  key: foo.bin-{{ .Revision }}
+    deploy:
+        docker:
+            - image: alpine
+        steps:
+            - restore_cache:
+                key: foo.bin-{{ .Revision }}
+            - run: cat foo.bin
 
 workflows:
   version: 2
-  main:
+  workflow:
     jobs:
-    - build
+      - install_deps # ... ジョブA
+      - test_1:      # ... ジョブB
+          requires:
+            - install_deps
+      - test_2:      # ... ジョブC
+          requires:
+            - install_deps
+      - deploy:      # ... ジョブD
+          requires:
+            - test_1
+            - test_2
