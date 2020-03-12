@@ -1,0 +1,14 @@
+version: 2.1
+
+jobs:
+    build:
+        docker:
+            - image: alpine
+        steps:
+            - run: echo "Hello, CircleCI!"
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build
