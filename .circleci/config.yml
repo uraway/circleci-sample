@@ -1,51 +1,24 @@
-version: 2
+version: 2.1
+
+orbs:
+    cli: circleci/circleci-cli@0.1.5
 
 jobs:
-    install_deps:
-        docker:
-            - image: alpine
+    build:
+        executor: cli/default
         steps:
-            - run: echo "Install Deps"
-    test_1:
-        docker:
-            - image: alpine
-        steps:
-            - run: echo "test_1" > foo.bin
-            - run: apk add --no-cache ca-certificates
-            - save_cache:
-                  paths:
-                    -  foo.bin
-                  key: foo.bin-{{ .Revision }}
-    test_2:
-        docker:
-            - image: alpine
-        steps:
-            - run: echo "test_2" > foo.bin
-            - run: apk add --no-cache ca-certificates
-            - save_cache:
-                  paths:
-                    -  foo.bin
-                  key: foo.bin-{{ .Revision }}
-    deploy:
-        docker:
-            - image: alpine
-        steps:
-            - restore_cache:
-                key: foo.bin-{{ .Revision }}
-            - run: cat foo.bin
+            - checkout
+            - setup_remote_docker
+            - run: circleci config process orb-test.yml > orb-test.2.0.yml
+            - run:
+                name: Run cicleci local execute
+                command: |
+                  docker container create --name tmp -v /configs busybox
+                  docker cp orb-test.2.0.yml tmp:/configs
+                  docker run --volumes-from tmp circleci/circleci-cli circleci local execute --config /configs/orb-test.2.0.yml
 
 workflows:
   version: 2
   workflow:
     jobs:
-      - install_deps # ... ジョブA
-      - test_1:      # ... ジョブB
-          requires:
-            - install_deps
-      - test_2:      # ... ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ... ジョブD
-          requires:
-            - test_1
-            - test_2
+      - build
