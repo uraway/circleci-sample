@@ -15,7 +15,7 @@ jobs:
                 command: |
                   docker container create --name tmp -v /configs busybox
                   docker cp orb-test.2.0.yml tmp:/configs
-                  docker run --volumes-from tmp circleci/circleci-cli "circleci local execute --config configs/orb-test.2.0.yml"
+                  docker run --volumes-from tmp circleci/circleci-cli "circleci local execute --config /configs/orb-test.2.0.yml"
 
 workflows:
   version: 2
