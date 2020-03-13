@@ -7,6 +7,7 @@ jobs:
     build:
         executor: cli/default
         steps:
+            - checkout
             - setup_remote_docker
             - run: circleci config process orb-test.yml > orb-test.2.0.yml
             - run:
