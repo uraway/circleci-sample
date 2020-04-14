@@ -80,6 +80,14 @@ jobs:
           name: TypeScriptコードをビルド
           command: $(npm bin)/tsc
 
+  deploy:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - run:
+          name: デプロイ
+          command: echo "Deployed"
+
 workflows:
   version: 2
   main:
@@ -89,8 +97,12 @@ workflows:
           requires:
             - install_deps
       - build:
+          name: build-v<< matrix.node-version >>
           matrix:
             parameters:
               node-version: ["12", "latest"]
           requires:
             - lint_and_test
+      - deploy:
+          requires:
+            - build-v12
