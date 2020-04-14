@@ -1,20 +1,8 @@
-parameters:
-  image-tag:
-    default: 'latest'
-    type: string
-  run-main-workflow:
-    default: false
-    type: boolean
-
-executors:
-  node:
-    docker:
-      - image: circleci/node:<< pipeline.parameters.image-tag >>
-
 version: 2.1
 jobs:
   install_deps:
-    executor: node
+    docker:
+      - image: circleci/node:12
     steps:
       - checkout
 
@@ -39,7 +27,8 @@ jobs:
             - node_modules/*
 
   lint_and_test:
-    executor: node
+    docker:
+      - image: circleci/node:12
     steps:
       - checkout
 
@@ -75,7 +64,12 @@ jobs:
           prefix: coverage
 
   build:
-    executor: node
+    parameters:
+      node-version:
+        type: string
+        default: "12"
+    docker:
+      - image: circleci/node:<< parameters.node-version >>
     steps:
       - checkout
 
@@ -86,42 +80,17 @@ jobs:
           name: TypeScriptコードをビルド
           command: $(npm bin)/tsc
 
-  trigger-jobs:
-    machine:
-      image: ubuntu-1604:201903-01
-    parameters:
-      image-tag:
-        default: 'latest'
-        type: string
-    steps:
-      - run:
-          command: |
-            VCS_TYPE=$(echo ${CIRCLE_BUILD_URL} | cut -d '/' -f 4)
-
-            curl -u ${CIRCLE_TOKEN}: -X POST --header "Content-Type: application/json" -d "{
-              \"branch\": \"${CIRCLE_BRANCH}\",
-              \"parameters\": {\"run-main-workflow\": true, \"image-tag\":\"<< parameters.image-tag >>\"}
-            }" "https://circleci.com/api/v2/project/${VCS_TYPE}/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline"
-          name: Trigger main worflow
-
 workflows:
   version: 2
-  trigger-jobs:
-    unless: << pipeline.parameters.run-main-workflow >>
-    jobs:
-      - trigger-jobs:
-          name: LTSリリース
-          image-tag: '12'
-      - trigger-jobs:
-          name: 最新リリース
-          image-tag: 'latest'
   main:
-    when: << pipeline.parameters.run-main-workflow >>
     jobs:
       - install_deps
       - lint_and_test:
           requires:
             - install_deps
       - build:
+          matrix:
+            parameters:
+              node-version: ["12", "latest"]
           requires:
             - lint_and_test
