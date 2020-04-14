@@ -97,7 +97,7 @@ workflows:
           requires:
             - install_deps
       - build:
-          name: build-v<< matrix.node-version >>
+          name: build-<< matrix.node-version >>
           matrix:
             parameters:
               node-version: ["12", "latest"]
@@ -105,4 +105,5 @@ workflows:
             - lint_and_test
       - deploy:
           requires:
-            - build-v12
+            - build-12
+            - build-latest
