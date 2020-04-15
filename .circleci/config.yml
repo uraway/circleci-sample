@@ -84,13 +84,24 @@ jobs:
           name: TypeScriptコードをビルド
           command: $(npm bin)/tsc
 
+      - when:
+          steps:
+            - persist_to_workspace:
+                root: ./
+                paths:
+                  - build
+
   deploy:
     docker:
       - image: circleci/node:12
     steps:
+      - attach_workspace:
+          at: ./
       - run:
           name: デプロイ
           command: echo "Deployed"
+      - store_artifacts:
+          path: build
 
 workflows:
   version: 2
