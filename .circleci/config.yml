@@ -27,8 +27,12 @@ jobs:
             - node_modules/*
 
   lint_and_test:
+    parameters:
+      node-version:
+        type: string
+        default: "12"
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:<< parameters.node-version >>
     steps:
       - checkout
 
@@ -94,10 +98,12 @@ workflows:
     jobs:
       - install_deps
       - lint_and_test:
+          matrix:
+            parameters:
+              node-version: ["12", "latest"]
           requires:
             - install_deps
       - build:
-          name: build-<< matrix.node-version >>
           matrix:
             parameters:
               node-version: ["12", "latest"]
@@ -105,5 +111,5 @@ workflows:
             - lint_and_test
       - deploy:
           requires:
-            - build-12
-            - build-latest
+            - build
+# https://circleci.com/workflow-run/00259183-1fcb-4e33-9ae7-36599a7d22b1
