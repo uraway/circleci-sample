@@ -84,12 +84,10 @@ jobs:
           name: TypeScriptコードをビルド
           command: $(npm bin)/tsc
 
-      - when:
-          steps:
-            - persist_to_workspace:
-                root: ./
-                paths:
-                  - build
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - build
 
   deploy:
     docker:
