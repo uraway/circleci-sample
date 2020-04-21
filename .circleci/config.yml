@@ -68,12 +68,8 @@ jobs:
           prefix: coverage
 
   build:
-    parameters:
-      node-version:
-        type: string
-        default: "12"
     docker:
-      - image: circleci/node:<< parameters.node-version >>
+      - image: circleci/node:12
     steps:
       - checkout
 
@@ -113,9 +109,6 @@ workflows:
           requires:
             - install_deps
       - build:
-          matrix:
-            parameters:
-              node-version: ["12", "latest"]
           requires:
             - lint_and_test
       - deploy:
