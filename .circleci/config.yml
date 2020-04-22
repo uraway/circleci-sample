@@ -103,6 +103,7 @@ workflows:
     jobs:
       - install_deps
       - lint_and_test:
+          name: lint_and_test-<< matrix.node-version >>
           matrix:
             parameters:
               node-version: ["12", "latest"]
