@@ -4,7 +4,9 @@ jobs:
     docker:
       - image: busybox
     steps:
+      - run: circleci version
       - run: circleci step halt
+      - run: circleci version
 
 workflows:
   version: 2
