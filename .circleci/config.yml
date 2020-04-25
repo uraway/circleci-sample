@@ -31,11 +31,13 @@ jobs:
       node-version:
         type: string
         default: "12"
+      platform:
+        type: string
     docker:
       - image: circleci/node:<< parameters.node-version >>
     steps:
       - checkout
-
+      - run: echo << parameters.platform >>
       - attach_workspace:
           at: ~/project
 
@@ -107,6 +109,10 @@ workflows:
           matrix:
             parameters:
               node-version: ["12", "latest"]
+              platform: ["macos", "windows", "linux"]
+            exclude:
+              - node-version: "latest"
+                platform: "windows"
           requires:
             - install_deps
       - build:
