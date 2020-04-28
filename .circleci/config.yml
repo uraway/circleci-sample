@@ -1,32 +1,11 @@
-
-version: 2.1
+version: 2
 
 jobs:
-  npm_publish_job:
+  build:
     docker:
-      - image: circleci/node
+      - image: busybox
     steps:
-      - checkout
-      - run:
-          name: "依存モジュールをインストールする"
-          command: npm install
-      - run:
-          name: "モジュールをビルドする"
-          command: npm build
-      - run:
-          name: "NPMトークンを設定する"
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run:
-          name: "npmパッケージとして公開する"
-          command: npm publish
-
-workflows:
-  version: 2
-  npm_publish:
-    jobs:
-      - npm_publish_job:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+      - run: |
+          echo "Hello" # echo "firt comment"
+          # echo "second comment"
+          echo "World"
