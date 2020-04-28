@@ -1,9 +1,11 @@
 version: 2
-
+# comment
 jobs:
+# comment
   build:
+    # comment
     docker:
-      - image: busybox
+      - image: busybox # comment
     steps:
       - run: |
           echo "Hello" # echo "firt comment"
