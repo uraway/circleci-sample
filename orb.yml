@@ -1,0 +1,27 @@
+commands:
+  echo-command:
+    description: echoコマンド
+    parameters:
+      to:
+        default: World
+        type: string
+    steps:
+    - run: echo "Hello, << parameters.to >>"
+description: My First Orb
+executors:
+  default:
+    docker:
+    - image: busybox
+jobs:
+  echo-job:
+    description: echoジョブ
+    executor: default
+    parameters:
+      to:
+        default: World
+        type: string
+    steps:
+    - echo-command:
+        to: << parameters.to >>
+version: 2.1
+

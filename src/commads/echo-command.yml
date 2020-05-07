@@ -1,8 +1,0 @@
-echo-command:
-  description: "echoコマンド"
-  parameters:
-    to:
-      type: string
-      default: "World"
-  steps:
-    - run: echo "Hello, << parameters.to >>"
