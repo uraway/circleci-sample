@@ -1,0 +1,9 @@
+description: "echoジョブ"
+parameters:
+  to:
+    type: string
+    default: "World"
+executor: default
+steps:
+  - echo-command:
+      to: << parameters.to >>

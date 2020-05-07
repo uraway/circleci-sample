@@ -1,13 +1,36 @@
-version: 2.1
-jobs:
-  build:
-    docker:
-      - image: busybox
-    steps:
-      - run: circleci step halt
+orbs:
+  orb-tools: circleci/orb-tools@9.0.0
+  hello-world: sample-orbs/hello-world@<<pipeline.parameters.dev-orb-version>>
 
+parameters:
+  dev-orb-version:
+    default: 'dev:alpha'
+    type: string
+  run-integration-tests:
+    default: false
+    type: boolean
+
+jobs:
+  integration-tests:
+    executor: hello-world/default
+    steps:
+      - checkout
+      - hello-world/echo-command
+
+version: 2.1
 workflows:
-  version: 2
-  main:
+  integration-tests:
+    when: << pipeline.parameters.run-integration-tests >> # パイプラインパラメータrun-integration-testsがtrueでなければ実行しない
     jobs:
-    - build
+      - integration-tests
+  trigger-integration-tests-workflow:
+    unless: << pipeline.parameters.run-integration-tests >> # パイプラインパラメータrun-integration-testsがtrueであれば実行しない
+    jobs:
+      - orb-tools/pack
+      - orb-tools/publish-dev:
+          orb-name: sample-orbs/hello-world
+          requires:
+            - orb-tools/pack
+      - orb-tools/trigger-integration-tests-workflow:
+          requires:
+            - orb-tools/publish-dev
