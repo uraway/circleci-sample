@@ -1,13 +1,11 @@
-version: 2.1
 jobs:
   build:
     docker:
       - image: busybox
     steps:
-      - run: circleci step halt
-
+      - run: echo "Hello, World"
 workflows:
   version: 2
-  main:
+  workflow:
     jobs:
-    - build
+      - build
