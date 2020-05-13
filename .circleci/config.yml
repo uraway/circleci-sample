@@ -8,11 +8,11 @@ jobs:
     executor: win/default
     steps:
       - run:
-         command: $(echo hello | Out-Host; $?) -and $(echo world | Out-Host; $?)
+         command: Write-Host 'Hello, World!
          shell: powershell.exe
       - run:
-         command: echo hello && echo world
+         command: echo 'Hello, World!
          shell: bash.exe
       - run:
-         command: echo hello & echo world
+         command: echo 'Hello, World!
          shell: cmd.exe
