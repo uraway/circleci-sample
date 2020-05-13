@@ -8,11 +8,13 @@ jobs:
     executor: win/default
     steps:
       - run:
-         command: Write-Host 'Hello, World!
+         command: |
+           echo "Write-Host 'Hello, World!'" > HelloWorld.ps1
+           .\HelloWorld.ps1
          shell: powershell.exe
       - run:
-         command: echo 'Hello, World!
+         command: echo "Hello, World!"
          shell: bash.exe
       - run:
-         command: echo 'Hello, World!
+         command: echo "Hello, World!"
          shell: cmd.exe
