@@ -9,12 +9,16 @@ jobs:
     steps:
       - run:
          command: |
-           echo "Write-Host 'Hello, World!'" > HelloWorld.ps1
+           echo "echo 'Hello, World!'" > HelloWorld.ps1
            .\HelloWorld.ps1
          shell: powershell.exe
       - run:
-         command: echo "Hello, World!"
+         command: |
+           echo "Hello, World!" > HelloWorld.sh
+           .\HelloWorld.sh
          shell: bash.exe
       - run:
-         command: echo "Hello, World!"
+         command: |
+           echo "Hello, World!" > HelloWorld.cmd
+           .\HelloWorld.cmd
          shell: cmd.exe
