@@ -1,11 +1,18 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.4.0
+
 jobs:
   build:
-    docker:
-      - image: busybox
+    executor: win/default
     steps:
-      - run: echo "Hello, World"
-workflows:
-  version: 2
-  workflow:
-    jobs:
-      - build
+      - run:
+         command: $(echo hello | Out-Host; $?) -and $(echo world | Out-Host; $?)
+         shell: powershell.exe
+      - run:
+         command: echo hello && echo world
+         shell: bash.exe
+      - run:
+         command: echo hello & echo world
+         shell: cmd.exe
