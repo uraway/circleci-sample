@@ -1,12 +1,12 @@
 version: 2
 jobs:
- test_deploy:
+ build:
    parallelism: 4
    docker:
      - image: busybox
    steps:
-     - run: echo "テスト"
-     - deploy: |
-          if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            echo "デプロイ"
-          fi
+     - run: mkdir -p ./coverage
+     - run: echo "テスト" > ./coverage/hello.txt
+     - store_artifacts:
+         path: ./coverage
+         destination: coverage
