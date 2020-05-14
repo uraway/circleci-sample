@@ -1,24 +1,12 @@
-version: 2.1
-
-orbs:
-  win: circleci/windows@2.4.0
-
+version: 2
 jobs:
-  build:
-    executor: win/default
-    steps:
-      - run:
-         command: |
-           echo "echo 'Hello, World!'" > HelloWorld.ps1
-           .\HelloWorld.ps1
-         shell: powershell.exe
-      - run:
-         command: |
-           echo "Hello, World!" > HelloWorld.sh
-           .\HelloWorld.sh
-         shell: bash.exe
-      - run:
-         command: |
-           echo "Hello, World!" > HelloWorld.cmd
-           .\HelloWorld.cmd
-         shell: cmd.exe
+ test_deploy:
+   parallelism: 4
+   docker:
+     - image: busybox
+   steps:
+     - run: echo "テスト"
+     - deploy: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            echo "デプロイ"
+          fi
