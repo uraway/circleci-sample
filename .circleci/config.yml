@@ -3,7 +3,7 @@ jobs:
  build:
    parallelism: 4
    docker:
-     - image: busybox
+     - image: circleci/node:latest
    steps:
      - run: mkdir -p ./coverage
      - run: echo "テスト" > ./coverage/hello.txt
