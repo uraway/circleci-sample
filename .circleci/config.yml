@@ -23,8 +23,8 @@ workflows:
       - build:
           matrix:
             parameters:
-              ruby-version: ["2.5", "2.6", "2.7"]
-              db-image: ["mysql", "postgresql"]
+              ruby-version: ["2.5", "2.6", latest]
+              db-image: [mysql, postgresql]
             exclude:
               - ruby-version: ["2.5"]
                 db-image: ["mysql"]
