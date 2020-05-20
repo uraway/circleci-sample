@@ -10,7 +10,7 @@ jobs:
         type: string
         default: mysql
     docker:
-      - image: circleci/ruby-<< parameters.ruby-version >>
+      - image: circleci/ruby:<< parameters.ruby-version >>
       - image: circleci/<< parameters.db-image >>
     steps:
       - checkout
@@ -23,8 +23,8 @@ workflows:
       - build:
           matrix:
             parameters:
-              ruby-version: ["2.5", "2.6", latest]
+              ruby-version: ["2.5", "2.6", "2.7"]
               db-image: [mysql, postgresql]
             exclude:
-              - ruby-version: ["2.5"]
-                db-image: ["mysql"]
+              - ruby-version: "2.5"
+                db-image: mysql
