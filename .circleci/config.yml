@@ -24,7 +24,7 @@ workflows:
           matrix:
             parameters:
               ruby-version: ["2.5", "2.6", "2.7"]
-              db-image: [mysql, postgresql]
+              db-image: [mysql, postgres]
             exclude:
               - ruby-version: "2.5"
                 db-image: mysql
