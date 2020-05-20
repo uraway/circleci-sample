@@ -1,12 +1,30 @@
-version: 2
+version: 2.1
+
 jobs:
- build:
-   parallelism: 4
-   docker:
-     - image: circleci/node:latest
-   steps:
-     - run: mkdir -p ./coverage
-     - run: echo "テスト" > ./coverage/hello.txt
-     - store_artifacts:
-         path: ./coverage
-         destination: coverage
+  build:
+    parameters:
+      ruby-version:
+        type: string
+        default: "2.5"
+      db-image:
+        type: string
+        default: mysql
+    docker:
+      - image: circleci/ruby-<< parameters.ruby-version >>
+      - image: circleci/<< parameters.db-image >>
+    steps:
+      - checkout
+      - run: echo "Hello, World."
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build:
+          matrix:
+            parameters:
+              ruby-version: ["2.5", "2.6", "2.7"]
+              db-image: ["mysql", "postgresql"]
+            exclude:
+              - ruby-version: ["2.5"]
+                db-image: ["mysql"]
