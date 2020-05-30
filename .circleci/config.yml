@@ -7,7 +7,7 @@ jobs:
           condition:
             or:
               - not:
-                - equal: [ development, $CIRCLECI_BRANCH ]
+                - equal: [ development, development ]
               - and: [ $CIRCLE_TAG ]
           steps:
             - run: echo "deploy"
