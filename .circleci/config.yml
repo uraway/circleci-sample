@@ -19,6 +19,8 @@ jobs:
       - run:
           name: integration-testワークフローをトリガする
           command: |
+            echo << pipeline.project.type >>
+
             curl -u ${CIRCLE_TOKEN}: -X POST --header "Content-Type: application/json" -d "{
               \"parameters\": {\"run-integration-tests\": true\"}
             }" "https://circleci.com/api/v2/project/<< pipeline.project.type >>/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline"
