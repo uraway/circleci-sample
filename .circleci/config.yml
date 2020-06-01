@@ -1,15 +1,12 @@
 version: 2.1
 jobs:
   build:
-    machine: true
+    docker:
+      - image: busybox
     steps:
-      - checkout
-      - when:
-          condition:
-            or:
-              - not:
-                - equal: [ development, $CIRCLE_BRANCH ]
-              - and: [ $CIRCLE_TAG ]
-          steps:
-            - run: echo "deploy"
-            - run: echo $CIRCLE_TAG
+      - run: echo $CIRCLE_COMPARE_URL
+
+workflows:
+  workflow:
+    jobs:
+      - build
