@@ -1,4 +1,4 @@
-version: 2.1
+version: 2
 jobs:
   build:
     docker:
@@ -7,6 +7,7 @@ jobs:
       - run: echo $CIRCLE_COMPARE_URL
 
 workflows:
+  version: 2
   workflow:
     jobs:
       - build
