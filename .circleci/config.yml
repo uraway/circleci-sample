@@ -1,8 +1,11 @@
-version: 2
+version: 2.1
+
 jobs:
   build:
     docker:
       - image: busybox
+    environment:
+      CIRCLE_COMPARE_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<<pipeline.git.revision>>
     steps:
       - run: echo $CIRCLE_COMPARE_URL
 
