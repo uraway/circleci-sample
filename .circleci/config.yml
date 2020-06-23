@@ -3,21 +3,21 @@ version: 2.1
 jobs:
   audit_job:
     docker:
-        - image: circleci/node
+      - image: circleci/node
     steps:
       - checkout
-      - run: # ・・・ 1
+      - run: # (d1)
           name: "npm audit結果を.npm_audit.logファイルに格納する"
           command: |
             set +e
-            npm audit --parseable | awk -F $'\t' '{print $4}' >> .npm_audit.log
+            npm audit --parseable >> .npm_audit.log
 
             if [ "$?" -eq 0 ]; then
               echo "脆弱性のある依存パッケージなし"
               circleci step halt
             fi
-      - run: # ・・・ 2
-          name: "GitHub Issueに投げる"
+      - run: # (d2)
+          name: "GitHub Issueを作成する"
           command: |
             body=$(cat .npm_audit.log | sed 's/.$/<br>/')
 
@@ -32,6 +32,7 @@ jobs:
 workflows:
   version: 2
   audit:
+    # 毎日0時に定期実行
     # triggers:
     #   - schedule:
     #       cron: "0 0 * * *"
