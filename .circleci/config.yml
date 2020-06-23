@@ -9,6 +9,7 @@ jobs:
       - run: # ・・・ 1
           name: "npm audit結果を.npm_audit.logファイルに格納する"
           command: |
+            set +e
             npm audit --parseable | awk -F $'\t' '{print $4}' >> .npm_audit.log
 
             if [ "$?" -eq 0 ]; then
@@ -18,7 +19,7 @@ jobs:
       - run: # ・・・ 2
           name: "GitHub Issueに投げる"
           command: |
-            body=$(cat .npm_audit.log | sed 's/$/<br>/')
+            body=$(cat .npm_audit.log)
 
             curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
                 https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues \
