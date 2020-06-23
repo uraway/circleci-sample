@@ -1,13 +1,31 @@
+# ref: https://github.com/azu/textlint-reviewdog-example
 version: 2.1
+
 jobs:
-  build:
+  proofreading_job:
     docker:
-      - image: busybox
+      - image: circleci/node
     steps:
-      - run: circleci step halt
+      - checkout
+      - run:
+          name: "依存モジュールをインストールする"
+          command: npm install
+      - run:
+          name: "reviewdogをインストールする"
+          command: |
+            curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s
+      - run: # (d1)
+          name: "textlintをREADME.mdに対して実行する"
+          command: npx textlint -f checkstyle README.md >> .textlint.log
+      - run: # (d2)
+          name: "reviewdogを実行する"
+          when: on_fail
+          command: |
+            export REVIEWDOG_GITHUB_API_TOKEN=${GITHUB_TOKEN}
+            cat .textlint.log | ./bin/reviewdog -f=checkstyle -name="textlint" -reporter="github-pr-review" -diff="git diff master"
 
 workflows:
   version: 2
-  main:
+  proofreading:
     jobs:
-    - build
+      - proofreading_job
