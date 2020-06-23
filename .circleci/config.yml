@@ -9,7 +9,6 @@ jobs:
       - run: # ・・・ 1
           name: "npm audit結果を.npm_audit.logファイルに格納する"
           command: |
-            set +e
             npm audit --parseable | awk -F $'\t' '{print $4}' >> .npm_audit.log
 
             if [ "$?" -eq 0 ]; then
