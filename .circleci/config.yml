@@ -23,12 +23,7 @@ jobs:
 
             curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
                 https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues \
-                -d @- \<< EOF
-                {
-                    "title": "npm audit",
-                    "body": "${body}"
-                }
-            EOF
+                -d "{ 'title': 'npm audit', 'body': '${body}' }"
 workflows:
   version: 2
   audit:
