@@ -19,7 +19,7 @@ jobs:
       - run: # (d2)
           name: "GitHub Issueを作成する"
           command: |
-            body="<pre><code>$(cat .npm_audit.log | tr '/' '\/' | tr '\t' ' ' | tr '\n' '<br>')</code></pre>"
+            body="<pre><code>$(cat .npm_audit.log | tr '/' '\/' | sed 's/\\t/ /g' | sed -e 's/\\n/<br>/g')</code></pre>"
 
             curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
                 --header 'Content-Type: application/json' \
