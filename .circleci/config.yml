@@ -11,6 +11,7 @@ jobs:
           command: |
             set +e
             npm audit --parseable >> .npm_audit.log
+            cat .npm_audit.log
 
             if [ "$?" -eq 0 ]; then
               echo "脆弱性のある依存パッケージなし"
@@ -19,14 +20,14 @@ jobs:
       - run: # (d2)
           name: "GitHub Issueを作成する"
           command: |
-            body=$(cat .npm_audit.log | sed 's/.$/<br>/')
+            body="<code>$(cat .npm_audit.log)</code>"
 
             curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
                 https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues \
                 -d @- \<< EOF
                 {
                     "title": "npm audit",
-                    "body" : "```${body}```"
+                    "body" : "${body}"
                 }
             EOF
 workflows:
