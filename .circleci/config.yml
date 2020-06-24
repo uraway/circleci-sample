@@ -26,7 +26,7 @@ jobs:
                 -d @- \<< EOF
                 {
                     "title": "npm audit",
-                    "body" : "${body}"
+                    "body" : "```${body}```"
                 }
             EOF
 workflows:
