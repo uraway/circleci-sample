@@ -19,7 +19,7 @@ jobs:
       - run: # (d2)
           name: "GitHub Issueを作成する"
           command: |
-            body="<code>$(cat .npm_audit.log | sed "s/\"/'/g")</code>"
+            body="'<code>$(cat .npm_audit.log | sed "s/\"/'/g")</code>'"
 
             curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
                 https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues \
