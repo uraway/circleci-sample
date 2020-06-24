@@ -22,6 +22,7 @@ jobs:
             body="<code>$(cat .npm_audit.log | sed "s/'/\\\\\'/g")</code>"
 
             curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
+                --header 'Content-Type: application/json' \
                 https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues \
                 -d "{\"title\":\"npm audit\", \"body\":\"$body\"}"
 workflows:
