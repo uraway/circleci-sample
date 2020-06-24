@@ -10,7 +10,7 @@ jobs:
           name: "npm audit結果を.npm_audit.logファイルに格納する"
           command: |
             set +e
-            npm audit --parseable >> .npm_audit.log
+            npm audit --parseable | awk -F $'\t' '{print $4,$5,$6}' >> .npm_audit.log
 
             if [ "$?" -eq 0 ]; then
               echo "脆弱性のある依存パッケージなし"
@@ -19,12 +19,16 @@ jobs:
       - run: # (d2)
           name: "GitHub Issueを作成する"
           command: |
-            body="<pre><code>$(cat .npm_audit.log | tr '/' '\/' | sed 's/\\t/ /g' | sed -e 's/\\n/<br>/g')</code></pre>"
+            body="<pre><code>$(cat .npm_audit.log | sed 's/$/<br>/')</code></pre>"
 
             curl -u "${GITHUB_USER}":"${GITHUB_TOKEN}" -X POST -i \
-                --header 'Content-Type: application/json' \
                 https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues \
-                -d "{\"title\":\"npm audit\", \"body\":\"$body\"}"
+                -d @- \<< EOF
+                {
+                    "title": "npm audit",
+                    "body" : "${body}"
+                }
+            EOF
 workflows:
   version: 2
   audit:
