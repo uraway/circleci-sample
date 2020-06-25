@@ -8,19 +8,10 @@ jobs:
       - run:
           name: Dockerクライアントのインストール
           command:
-            set -x
-            DOCKER_VERSION="17.09.0-ce"
-            DOCKER_URL="https://download.docker.com/linux/static/stable/x86_64/${DOCKER_VERSION}"
-            curl --silent --show-error --location --fail --retry 3 --output /tmp/docker.tgz "${DOCKER_URL}" \
-            && ls -lha /tmp/docker.tgz \
-            && tar -xz -C /tmp -f /tmp/docker.tgz \
-            && mv /tmp/docker/* /usr/bin \
-            && rm -rf /tmp/docker /tmp/docker.tgz \
-            && which docker \
-            && (docker version || true)
+            apk add docker-cli
 
-      - run: docker -v
       - setup_remote_docker
+      - run: docker -v
       - run:
           name: Docker Hubへログイン
           command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
