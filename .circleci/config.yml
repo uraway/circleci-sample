@@ -5,7 +5,8 @@ jobs:
       - image: circleci/ruby:2.6.5-node
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 17.03.0-ce
       - run: docker -v
       - run:
           name: Docker Hubへログイン
