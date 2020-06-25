@@ -2,13 +2,13 @@ version: 2.1
 jobs:
   build_and_push:
     docker:
-      - image: ruby:2.6.5
+      - image: 2.7.1-alpine3.12
     steps:
       - checkout
       - run:
           name: Dockerクライアントのインストール
           command:
-            yum install docker-cli
+            apk add docker-cli
 
       - setup_remote_docker
       - run: docker -v
