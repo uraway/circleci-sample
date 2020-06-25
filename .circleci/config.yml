@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build_and_push:
     docker:
-      - image: 2.7.1-alpine3.12
+      - image: ruby:alpine3.12
     steps:
       - checkout
       - run:
