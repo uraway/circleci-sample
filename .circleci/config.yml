@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Dockerクライアントのインストール
           command:
-            apk add docker-cli
+            yum install docker-cli
 
       - setup_remote_docker
       - run: docker -v
