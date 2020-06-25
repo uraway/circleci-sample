@@ -6,6 +6,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - run: docker -v
       - run:
           name: Docker Hubへログイン
           command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
