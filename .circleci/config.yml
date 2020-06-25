@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build_and_push:
     docker:
-      - image: ruby:2.6.5-node
+      - image: ruby:2.6.5
     steps:
       - checkout
       - run:
