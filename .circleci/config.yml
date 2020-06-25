@@ -2,14 +2,9 @@ version: 2.1
 jobs:
   build_and_push:
     docker:
-      - image: ruby:alpine3.12
+      - image: circleci/ruby:2.6.5-node
     steps:
       - checkout
-      - run:
-          name: Dockerクライアントのインストール
-          command:
-            apk add docker-cli
-
       - setup_remote_docker
       - run: docker -v
       - run:
@@ -17,7 +12,9 @@ jobs:
           command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
       - run:
           name: 環境変数REGISTORY_URLの設定
-          command: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
+          command: |
+            echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
+            echo ${REGISTORY_URL}
       - run:
           name: 指定イメージのpull
           command: docker pull ${REGISTORY_URL}:latest
