@@ -1,25 +1,40 @@
 version: 2.1
 jobs:
   build:
-    machine: true
+    docker:
+      - image: ruby:alpine3.12
     steps:
       - checkout
+      - restore_cache:
+          keys:
+          - v1-image-{{ .Branch }}
+          - v1-image-
+      - run:
+          name: イメージの.tarキャッシュがあればロード
+          command: |
+            set +o pipefail
+            docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
       - run:
           name: イメージのビルド
-          command: docker build -t ${CIRCLE_PROJECT_REPONAME} .
+          command: |
+            docker build --cache-from=${CIRCLE_PROJECT_REPONAME}:latest -t ${CIRCLE_PROJECT_REPONAME} .
       - run:
-          name: イメージを.tarにまとめて保存
+          name: イメージのレイヤを.tarにまとめて保存
           command: |
             mkdir -p ~/caches
             docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
-
+      - save_cache:
+          key: v1-image-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ~/caches
       - persist_to_workspace:
           root: ~/
           paths:
             - caches
 
   ping1:
-    machine: true
+    docker:
+      - image: ruby:alpine3.12
     steps:
       - checkout
       - attach_workspace:
@@ -39,7 +54,8 @@ jobs:
           curl --retry 10 --retry-connrefused http://localhost:3000
 
   ping2:
-    machine: true
+    docker:
+      - image: ruby:alpine3.12
     steps:
       - checkout
       - attach_workspace:
