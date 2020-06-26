@@ -51,7 +51,7 @@ jobs:
       - run: docker images
 
       - run: |
-          docker run -d -p 3000:3000 circleci-sample
+          docker run -d --name circleci-sample -p 3000:3000 circleci-sample
           # 次のコマンドは失敗する
           curl --retry 10 --retry-connrefused http://localhost:3000
 
@@ -73,7 +73,7 @@ jobs:
       - run: docker images
 
       - run: |
-          docker run -d -p 3000:3000 circleci-sample
+          docker run -d --name circleci-sample -p 3000:3000 circleci-sample
           # 次のコマンドは成功する
           docker exec circleci-sample curl --retry 10 --retry-connrefused http://localhost:3000
 
