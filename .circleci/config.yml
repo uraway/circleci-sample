@@ -1,58 +1,18 @@
 version: 2.1
 jobs:
-  ping1:
-    docker:
-      - image: circleci/ruby:2.7.1
+  build:
+    machine: true
     steps:
       - checkout
-      - setup_remote_docker
-      - run:
-          name: Docker Hubへログイン
-          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-      - run:
-          name: 環境変数REGISTORY_URLの設定
-          command: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
-      - run:
-          name: 指定イメージのpull
-          command: docker pull ${REGISTORY_URL}:latest
-      - run:
-          name: イメージのビルド
-          command: docker build -t ${REGISTORY_URL} --cache-from ${REGISTORY_URL}:latest .
-
       - run: |
-          docker run -d --name ${CIRCLE_PROJECT_REPONAME} -p 3000:3000 ${REGISTORY_URL}
-          sleep 10
-          # 次のコマンドは失敗する
-          curl --retry 10 --retry-connrefused http://localhost:3000
+          docker run --name app mokemokechicken/capture_web "https://circleci.com" screenshot.png
+          docker cp app:/tmp/screenshot ./
 
-  ping2:
-    docker:
-      - image: circleci/ruby:2.7.1
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: Docker Hubへログイン
-          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-      - run:
-          name: 環境変数REGISTORY_URLの設定
-          command: echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
-      - run:
-          name: 指定イメージのpull
-          command: docker pull ${REGISTORY_URL}:latest
-      - run:
-          name: イメージのビルド
-          command: docker build -t ${REGISTORY_URL} --cache-from ${REGISTORY_URL}:latest .
-
-      - run: |
-          docker run -d --name ${CIRCLE_PROJECT_REPONAME} -p 3000:3000 ${REGISTORY_URL}
-          sleep 10
-          # 次のコマンドは成功する
-          docker exec ${CIRCLE_PROJECT_REPONAME} curl --retry 10 --retry-connrefused http://localhost:3000
+      - store_artifacts:
+            path: ./screenshot
 
 workflows:
-  version: 2
-  main:
-    jobs:
-      - ping1
-      - ping2
+    version: 2
+    main:
+      jobs:
+        - build
