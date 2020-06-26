@@ -1,52 +1,43 @@
 version: 2.1
 jobs:
-  build_and_push:
-    docker:
-      - image: circleci/ruby:2.6.5-node
+  build:
+    machine: true
     steps:
       - checkout
-      - setup_remote_docker
       - run:
-          name: Docker Hubへログイン
-          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+          name: イメージのビルド
+          command: docker build -t ${CIRCLE_PROJECT_REPONAME} .
       - run:
-          name: 環境変数REGISTORY_URLの設定
+          name: イメージを.tarにまとめて保存
           command: |
-            echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
-      # - run:
-      #     name: 指定イメージのpull
-      #     command: docker pull ${REGISTORY_URL}:latest
-      # - run:
-      #     name: イメージのビルド
-      #     command: docker build -t ${REGISTORY_URL} --cache-from ${REGISTORY_URL}:latest .
-      - restore_cache:
-          keys:
-          - v1-image-{{ .Branch }}
-          - v1-image-
+            mkdir -p ~/caches
+            docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - caches
+
+  e2e:
+    machine: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+
       - run:
           name: イメージの.tarキャッシュがあればロード
           command: |
             set +o pipefail
             docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
-      - run:
-          name: イメージのビルド
-          command: |
-            docker build --cache-from=${CIRCLE_PROJECT_REPONAME}:latest -t ${CIRCLE_PROJECT_REPONAME} .
-      - run:
-          name: イメージのレイヤを.tarにまとめて保存
-          command: |
-            mkdir -p ~/caches
-            docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
-      - save_cache:
-          key: v1-image-{{ .Branch }}-{{ epoch }}
-          paths:
-            - ~/caches
-      - run:
-          name: ビルドしたイメージはそのままpushが可能
-          command: docker push ${REGISTORY_URL}
+
+      - run: docker images
 
 workflows:
-    version: 2
-    main:
-      jobs:
-        - build_and_push
+  version: 2
+  main:
+    jobs:
+    - build
+    - e2e:
+        requires:
+          - build
