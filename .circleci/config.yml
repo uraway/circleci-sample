@@ -52,10 +52,5 @@ workflows:
   version: 2
   main:
     jobs:
-    - build
-    - ping1:
-        requires:
-          - build
-    - ping2:
-        requires:
-          - build
+      - ping1
+      - ping2
