@@ -5,7 +5,7 @@ jobs:
     steps:
       - checkout
       - run: |
-          docker run --name app --rm -v $PWD:/srv lifenz/docker-screenshot https://circleci.com screenshot.png 1920px 2000 1
+          docker run --name app --rm lifenz/docker-screenshot https://circleci.com screenshot.png 1920px 2000 1
           docker cp app:/srv ./
 
       - store_artifacts:
