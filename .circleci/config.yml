@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: ruby:alpine3.12
+      - image: circleci/ruby
     steps:
       - checkout
       - restore_cache:
@@ -34,7 +34,7 @@ jobs:
 
   ping1:
     docker:
-      - image: ruby:alpine3.12
+      - image: circleci/ruby
     steps:
       - checkout
       - attach_workspace:
@@ -55,7 +55,7 @@ jobs:
 
   ping2:
     docker:
-      - image: ruby:alpine3.12
+      - image: circleci/ruby
     steps:
       - checkout
       - attach_workspace:
