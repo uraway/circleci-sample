@@ -18,7 +18,7 @@ jobs:
           paths:
             - caches
 
-  e2e:
+  ping1:
     machine: true
     steps:
       - checkout
@@ -33,11 +33,39 @@ jobs:
 
       - run: docker images
 
+      - run: |
+          docker run -d -p 3000:3000 circleci-sample
+          # 次のコマンドは失敗する
+          curl --retry 10 --retry-connrefused http://localhost:3000
+
+  ping2:
+    machine: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+
+      - run:
+          name: イメージの.tarキャッシュがあればロード
+          command: |
+            set +o pipefail
+            docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
+
+      - run: docker images
+
+      - run: |
+          docker run -d -p 3000:3000 circleci-sample
+          # 次のコマンドは成功する
+          docker exec circleci-sample curl --retry 10 --retry-connrefused http://localhost:3000
+
 workflows:
   version: 2
   main:
     jobs:
     - build
-    - e2e:
+    - ping1:
+        requires:
+          - build
+    - ping2:
         requires:
           - build
