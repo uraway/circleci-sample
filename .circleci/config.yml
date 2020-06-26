@@ -5,6 +5,7 @@ jobs:
       - image: circleci/ruby
     steps:
       - checkout
+      - setup_remote_docker
       - restore_cache:
           keys:
           - v1-image-{{ .Branch }}
@@ -37,6 +38,7 @@ jobs:
       - image: circleci/ruby
     steps:
       - checkout
+      - setup_remote_docker
       - attach_workspace:
           at: ~/
 
@@ -58,6 +60,7 @@ jobs:
       - image: circleci/ruby
     steps:
       - checkout
+      - setup_remote_docker
       - attach_workspace:
           at: ~/
 
