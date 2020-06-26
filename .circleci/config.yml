@@ -20,7 +20,7 @@ jobs:
           command: docker build -t ${REGISTORY_URL} --cache-from ${REGISTORY_URL}:latest .
 
       - run: |
-          docker run -d --name ${REGISTORY_URL} -p 3000:3000 ${REGISTORY_URL}
+          docker run -d --name ${CIRCLE_PROJECT_REPONAME} -p 3000:3000 ${REGISTORY_URL}
           # 次のコマンドは失敗する
           curl --retry 10 --retry-connrefused http://localhost:3000
 
@@ -44,9 +44,9 @@ jobs:
           command: docker build -t ${REGISTORY_URL} --cache-from ${REGISTORY_URL}:latest .
 
       - run: |
-          docker run -d --name ${REGISTORY_URL} -p 3000:3000 ${REGISTORY_URL}
+          docker run -d --name ${CIRCLE_PROJECT_REPONAME} -p 3000:3000 ${REGISTORY_URL}
           # 次のコマンドは成功する
-          docker exec ${REGISTORY_URL} curl --retry 10 --retry-connrefused http://localhost:3000
+          docker exec ${CIRCLE_PROJECT_REPONAME} curl --retry 10 --retry-connrefused http://localhost:3000
 
 workflows:
   version: 2
