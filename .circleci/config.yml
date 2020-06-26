@@ -6,6 +6,19 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - run:
+          name: Docker Hubへログイン
+          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+      - run:
+          name: 環境変数REGISTORY_URLの設定
+          command: |
+            echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
+      # - run:
+      #     name: 指定イメージのpull
+      #     command: docker pull ${REGISTORY_URL}:latest
+      # - run:
+      #     name: イメージのビルド
+      #     command: docker build -t ${REGISTORY_URL} --cache-from ${REGISTORY_URL}:latest .
       - restore_cache:
           keys:
           - v1-image-{{ .Branch }}
