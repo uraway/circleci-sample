@@ -7,6 +7,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: sample/hello_world.txtファイルの作成
+          command: mkdir -p sample && touch sample/hello_world.txt
+      - run:
           name: docker cpしてリモートDocker環境にフォルダのマウント
           command: |
             docker container create --name tmp -v /sample busybox
