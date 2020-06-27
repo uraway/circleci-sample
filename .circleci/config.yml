@@ -3,13 +3,13 @@ version: 2.1
 jobs:
   install_deps:
     docker:
-      - image: busybox
+      - image: circleci/node
     steps:
       - run: echo "install_deps"
 
   test_1:
     docker:
-      - image: busybox
+      - image: circleci/node
     steps:
       - run: echo "test_1" > foo.bin
       - persist_to_workspace:
@@ -19,7 +19,7 @@ jobs:
 
   test_2:
     docker:
-      - image: busybox
+      - image: circleci/node
     steps:
       - run: echo "test_2" > foo.bin
       - persist_to_workspace:
@@ -29,7 +29,7 @@ jobs:
 
   deploy:
     docker:
-      - image: busybox
+      - image: circleci/node
     steps:
       - attach_workspace:
           at: .
