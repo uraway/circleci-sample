@@ -1,52 +1,28 @@
 version: 2.1
 
 jobs:
-  install_deps:
+  release_stage:
     docker:
       - image: busybox
     steps:
-      - run: echo "install_deps"
+      - run: echo "release_stage"
 
-  test_1:
+  release_prod:
     docker:
       - image: busybox
     steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  deploy:
-    docker:
-      - image: busybox
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
+      - run: echo "release_prod"
 
 workflows:
   version: 2
-  workflow:
+  stage_prod:
     jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
-          requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+      - release_stage:
+          filters:
+            branches:
+              only: /^stage-.*/
+      - release_prod:
+          filters:
+            branches:
+              only:
+                - prod
