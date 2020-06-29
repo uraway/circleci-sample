@@ -1,36 +1,25 @@
-orbs:
-  orb-tools: circleci/orb-tools@9.0.0
-  hello-world: sample-orbs/hello-world@<<pipeline.parameters.dev-orb-version>>
+version: 2.1
 
-parameters:
-  dev-orb-version:
-    default: 'dev:alpha'
-    type: string
-  run-integration-tests:
-    default: false
-    type: boolean
+orbs:
+  win: circleci/windows@2.4.0
 
 jobs:
-  integration-tests:
-    executor: hello-world/default
+  build:
+    executor: win/default
     steps:
       - checkout
-      - hello-world/echo-command
+      - run:
+          command: ver
+          shell: cmd.exe
+      - run:
+          command: Get-Date
+          shell: powershell.exe
+      - run:
+          command: echo 'This is bash'
+          shell: bash.exe
 
-version: 2.1
 workflows:
-  integration-tests:
-    when: << pipeline.parameters.run-integration-tests >> # パイプラインパラメータrun-integration-testsがtrueでなければ実行しない
+  version: 2
+  workflow:
     jobs:
-      - integration-tests
-  trigger-integration-tests-workflow:
-    unless: << pipeline.parameters.run-integration-tests >> # パイプラインパラメータrun-integration-testsがtrueであれば実行しない
-    jobs:
-      - orb-tools/pack
-      - orb-tools/publish-dev:
-          orb-name: sample-orbs/hello-world
-          requires:
-            - orb-tools/pack
-      - orb-tools/trigger-integration-tests-workflow:
-          requires:
-            - orb-tools/publish-dev
+      - build

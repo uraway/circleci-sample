@@ -1,0 +1,51 @@
+# Orb 'circleci/windows@2.4.0' resolved to 'circleci/windows@2.4.0'
+version: 2
+jobs:
+  build:
+    machine:
+      image: windows-server-2019-vs2019:stable
+    steps:
+    - checkout
+    - run:
+        command: ver
+        shell: cmd.exe
+    - run:
+        command: Get-Date
+        shell: powershell.exe
+    - run:
+        command: echo 'This is bash'
+        shell: bash.exe
+    resource_class: windows.medium
+    shell: powershell.exe -ExecutionPolicy Bypass
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - build
+
+# Original config.yml file:
+# version: 2.1
+# 
+# orbs:
+#   win: circleci/windows@2.4.0
+# 
+# jobs:
+#   build:
+#     executor: win/default
+#     steps:
+#       - checkout
+#       - run:
+#           command: ver
+#           shell: cmd.exe
+#       - run:
+#           command: Get-Date
+#           shell: powershell.exe
+#       - run:
+#           command: echo 'This is bash'
+#           shell: bash.exe
+# 
+# workflows:
+#   version: 2
+#   workflow:
+#     jobs:
+#       - build
