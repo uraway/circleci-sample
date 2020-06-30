@@ -1,25 +1,36 @@
 version: 2.1
 
-orbs:
-  win: circleci/windows@2.4.0
+parameters:
+  run-integration-tests:
+    type: boolean
+    default: false
 
 jobs:
-  build:
-    executor: win/default
+  test:
+    docker:
+      - image: circleci/python:3.7
     steps:
-      - checkout
+      - run: echo "インテグレーションテスト"
+
+  trigger:
+    docker:
+      - image: circleci/python:3.7
+    steps:
       - run:
-          command: ver
-          shell: cmd.exe
-      - run:
-          command: Get-Date
-          shell: powershell.exe
-      - run:
-          command: echo 'This is bash'
-          shell: bash.exe
+          name: integration-testワークフローをトリガする
+          command: |
+            curl -u ${CIRCLE_TOKEN}: -X POST --header "Content-Type: application/json" -d '{
+              "parameters": {
+                "run-integration-tests": "true"
+              }
+            }' https://circleci.com/api/v2/project/<< pipeline.project.type >>/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline
 
 workflows:
-  version: 2
-  workflow:
+  integration-test:
+    when: << pipeline.parameters.run-integration-tests >> # run-integration-testsがtrueであるとき、ワークフローは実行される
     jobs:
-      - build
+      - test
+  trigger-integration-test:
+    unless: << pipeline.parameters.run-integration-tests >> # run-integration-testsがfalseであるとき、ワークフローは実行される
+    jobs:
+      - trigger
