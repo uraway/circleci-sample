@@ -1,6 +1,6 @@
 orbs:
   cli: circleci/circleci-cli@0.1.7
-  hello-world: sample-orbs/hello-world@<< pipeline.parameters.dev-orb-version >> # テスト対象のOrbを呼び出す
+  hello-world: uraway/hello-world@<< pipeline.parameters.dev-orb-version >> # テスト対象のOrbを呼び出す
 
 version: 2.1
 
@@ -25,8 +25,8 @@ jobs:
       - run:
           name: devバージョンを公開
           command: |
-            circleci orb publish src/orb.yml sample-orbs/hello-world@dev:alpha --token ${CIRCLE_TOKEN}
-            circleci orb publish src/orb.yml sample-orbs/hello-world@dev:${CIRCLE_SHA1:0:7} --token ${CIRCLE_TOKEN}
+            circleci orb publish src/orb.yml uraway/hello-world@dev:alpha --token ${CIRCLE_TOKEN}
+            circleci orb publish src/orb.yml uraway/hello-world@dev:${CIRCLE_SHA1:0:7} --token ${CIRCLE_TOKEN}
 
   trigger-integration-test-workflow: # integration-testワークフローをトリガするジョブ
     executor: cli/default
