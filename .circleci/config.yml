@@ -1,27 +1,22 @@
 version: 2.1
-
-executors:
-  python:
-    docker:
-      - image: circleci/python:3.6.4
-  with_db:
-    docker:
-      - image: circleci/python:3.6.4
-      - image: circleci/postgres:9.6.2
+commands:
+  run-tests:
+    parameters:
+      your-test:
+        type: steps
+        default: []
+    steps:
+    - run: mkdir -p ./test-results
+    - steps: << parameters.your-test >>
+    - store_test_results:
+        path: ./test-results
 
 jobs:
-  test:
-    parameters:
-      e:
-        type: executor
-    executor: << parameters.e >>
+  build:
+    docker:
+      - image: circleci/ruby:latest
     steps:
-      - run: echo << parameters.e >>
-
-workflows:
-  workflow:
-    jobs:
-      - test:
-          e: python
-      - test:
-          e: with_db
+    - run-tests:
+        your-test:
+          - run: bundle exec rubocop
+          - run: bundle exec rspec
