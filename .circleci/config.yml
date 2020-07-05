@@ -1,22 +1,27 @@
 version: 2.1
-commands:
-  run-tests:
-    parameters:
-      your-test:
-        type: steps
-        default: []
-    steps:
-    - run: mkdir -p ./test-results
-    - steps: << parameters.your-test >>
-    - store_test_results:
-        path: ./test-results
 
 jobs:
   build:
-    docker:
-      - image: circleci/ruby:latest
+    machine: true
+    parameters:
+      aws-access-key-id:
+        type: env_var_name
+      aws-secret-access-key:
+        type: env_var_name
+
     steps:
-    - run-tests:
-        your-test:
-          - run: bundle exec rubocop
-          - run: bundle exec rspec
+      - run:
+          name: Configure AWS Access Key ID
+          command: |
+            aws configure set aws_access_key_id $<<parameters.aws-access-key-id>>
+      - run:
+          name: Configure AWS Secret Access Key
+          command: |
+            aws configure set aws_secret_access_key $<<parameters.aws-secret-access-key>>
+
+workflows:
+  workflow:
+    jobs:
+    - build:
+        aws-access-key-id: AWS_ACCESS_KEY_ID
+        aws-secret-access-key: AWS_SECRET_ACCESS_KEY
