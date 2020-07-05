@@ -1,19 +1,19 @@
 version: 2.1
 
 jobs:
-  copy-to-s3:
+  eslint:
     docker:
-      - image: circleci/python
+      - image: circleci/node
     parameters:
-      bucket-name:
-        description: バケット名
-        type: string
-        default: my-bucket
+      cache:
+        description: キャッシュ
+        type: boolean
+        default: false
     steps:
-      - run: aws s3 cp file.txt s3://<< parameters.bucket-name >>/
+      - run: yarn eslint <<# parameters.cache >> --cache <</ parameters.cache >>
 
 workflows:
   main:
     jobs:
-      - copy-to-s3:
-          bucket-name: "123"
+      - eslint:
+          cache: true
