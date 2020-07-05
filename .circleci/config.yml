@@ -1,16 +1,19 @@
 version: 2.1
 
 jobs:
-  deploy:
+  copy-to-s3:
     docker:
-      - image: busybox
+      - image: circleci/python
+    parameters:
+      bucket-name:
+        description: バケット名
+        type: string
+        default: my-bucket
     steps:
-      - checkout
-      - deploy:
-          command: echo "deploy"
+      - run: aws s3 cp file.txt s3://<< parameters.bucket-name >>/
 
 workflows:
-  version: 2
-  workflow:
+  main:
     jobs:
-      - deploy
+      - copy-to-s3:
+          bucket-name: "123"
