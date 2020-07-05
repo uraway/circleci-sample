@@ -1,19 +1,18 @@
 version: 2.1
 
 jobs:
-  eslint:
-    docker:
-      - image: circleci/node
+  build:
     parameters:
-      cache:
-        description: キャッシュ
-        type: boolean
-        default: false
+      parallelism:
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
+    machine: true
     steps:
-      - run: yarn eslint <<# parameters.cache >> --cache <</ parameters.cache >>
+      - checkout
 
 workflows:
-  main:
+  workflow:
     jobs:
-      - eslint:
-          cache: true
+      - build:
+          parallelism: 2
