@@ -1,18 +1,12 @@
 version: 2.1
-
 jobs:
   build:
     parameters:
-      parallelism:
-        type: integer
-        default: 1
-    parallelism: << parameters.parallelism >>
-    machine: true
+      node:
+        type: enum
+        enum: ["node", "node-browsers", "node-browsers-legacy"]
+        default: node
+    docker:
+      - image: circleci/python:3.7-<<parameters.node>>
     steps:
-      - checkout
-
-workflows:
-  workflow:
-    jobs:
-      - build:
-          parallelism: 2
+      - run: echo <<parameters.node>>
