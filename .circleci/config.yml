@@ -2,26 +2,35 @@ version: 2.1
 
 jobs:
   build:
-    machine: true
     parameters:
-      aws-access-key-id:
-        type: env_var_name
-      aws-secret-access-key:
-        type: env_var_name
-
+      ruby-version:
+        type: string
+      db-image:
+        type: string
+    docker:
+      - image: circleci/ruby:<< parameters.ruby-version >>
+      - image: circleci/<< parameters.db-image >>
     steps:
-      - run:
-          name: Configure AWS Access Key ID
-          command: |
-            aws configure set aws_access_key_id $<<parameters.aws-access-key-id>>
-      - run:
-          name: Configure AWS Secret Access Key
-          command: |
-            aws configure set aws_secret_access_key $<<parameters.aws-secret-access-key>>
+      - run: echo 'build job'
+
+  deploy:
+    machine: true
+    steps:
+      - run: echo 'deploy job'
 
 workflows:
+  version: 2
   workflow:
     jobs:
-    - build:
-        aws-access-key-id: AWS_ACCESS_KEY_ID
-        aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+      - build:
+          name: build-<< matrix.ruby-version >>-on-<< matrix.db-image >>
+          matrix:
+            parameters:
+              ruby-version: ["2.5", "2.6", "2.7"]
+              db-image: [mysql, postgres]
+            exclude:
+              - ruby-version: "2.5"
+                db-image: mysql
+      - deploy:
+          requires:
+            - build
