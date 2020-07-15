@@ -1,52 +1,58 @@
 version: 2.1
-
 jobs:
-  install_deps:
+  build:
     docker:
-      - image: busybox
+      - image: cimg/ruby:2.6.5
+    environment:
+      BUNDLE_PATH: vendor/bundle
     steps:
-      - run: echo "install_deps"
-
-  test_1:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
+      - checkout
+      - restore_cache:
+          keys:
+            - Gems-v1-{{ checksum "Gemfile.lock" }}
+            - Gems-v1-
+      #- run:
+      #    name: bunderをアップデート # (d1)
+      #    command: gem install bundler:2.0.2
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+      - save_cache:
+          key: Gems-v1-{{ checksum "Gemfile.lock" }}
           paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
+            - vendor/bundle
+      - run: # (d2)
+          name: jekyllビルド
+          command: bundle exec jekyll build --baseurl ${CIRCLE_PROJECT_REPONAME}
+      - persist_to_workspace: # (d3)
+          root: ./
           paths:
-            - foo.bin
-
+            - _site
   deploy:
-    docker:
-      - image: busybox
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
-
+      - attach_workspace: # (d4)
+          at: ./
+      - add_ssh_keys # (d5)
+      - run: # (d6)
+          name: gh-pagesブランチにプッシュ
+          command: |
+            cd _site
+            git init
+            git config user.name ${CIRCLE_USERNAME}
+            git config user.email circleci@example.com
+            git add .
+            git commit -m "[ci skip] deploy ${CIRCLE_SHA1}"
+            git push --force ${CIRCLE_REPOSITORY_URL} master:gh-pages
 workflows:
   version: 2
-  workflow:
+  build-deploy:
     jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
+      - build
+      - deploy:
           requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+            - build
+          filters:
+            branches:
+              only: jekyll-sample
