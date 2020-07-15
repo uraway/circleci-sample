@@ -1,55 +1,58 @@
-orbs:
-  cli: circleci/circleci-cli@0.1.7
-  hello-world: uraway/hello-world@<< pipeline.parameters.dev-orb-version >> # テスト対象のOrbを呼び出す
-
 version: 2.1
-
-parameters:
-  dev-orb-version:
-    default: 'dev:alpha'
-    type: string
-  run-integration-tests:
-    type: boolean
-    default: false
-
 jobs:
-  integration-test-for-orb: # 呼び出したテスト対象のOrbを使うジョブ(インテグレーションテスト)
-    executor: hello-world/default
-    steps:
-      - hello-world/echo-command
-
-  publish-dev-orb: # dev:alphaとdev:${CIRCLE_SHA1:0:7}バージョンのOrbを公開するジョブ
-    executor: cli/default
+  build:
+    docker:
+      - image: circleci/ruby:2.6.5
+    environment:
+      BUNDLE_PATH: vendor/bundle
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - Gems-v1-{{ checksum "Gemfile.lock" }}
+            - Gems-v1-
       - run:
-          name: devバージョンを公開
-          command: |
-            circleci orb publish src/orb.yml uraway/hello-world@dev:alpha --token ${CIRCLE_TOKEN}
-            circleci orb publish src/orb.yml uraway/hello-world@dev:${CIRCLE_SHA1:0:7} --token ${CIRCLE_TOKEN}
-
-  trigger-integration-test-workflow: # integration-testワークフローをトリガするジョブ
-    executor: cli/default
+          name: bunderをアップデート # (d1)
+          command: gem install bundler:2.0.2
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+      - save_cache:
+          key: Gems-v1-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - run: # (d2)
+          name: jekyllビルド
+          command: bundle exec jekyll build --baseurl ${CIRCLE_PROJECT_REPONAME}
+      - persist_to_workspace: # (d3)
+          root: ./
+          paths:
+            - _site
+  deploy:
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
-      - run:
-          name: integration-testワークフローをトリガする
+      - attach_workspace: # (d4)
+          at: ./
+      - add_ssh_keys # (d5)
+      - run: # (d6)
+          name: gh-pagesブランチにプッシュ
           command: |
-            VCS_TYPE=$(echo ${CIRCLE_BUILD_URL} | cut -d '/' -f 4)
-
-            curl -u ${CIRCLE_TOKEN}: -X POST --header "Content-Type: application/json" -d "{
-              \"branch\": \"${CIRCLE_BRANCH}\",
-              \"parameters\": {\"run-integration-tests\": true, \"dev-orb-version\":\"dev:${CIRCLE_SHA1:0:7}\"}
-            }" "https://circleci.com/api/v2/project/${VCS_TYPE}/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline"
-
+            cd _site
+            git init
+            git config user.name ${CIRCLE_USERNAME}
+            git config user.email circleci@example.com
+            git add .
+            git commit -m "[ci skip] deploy ${CIRCLE_SHA1}"
+            git push --force ${CIRCLE_REPOSITORY_URL} master:gh-pages
 workflows:
-  integration-test:
-    when: << pipeline.parameters.run-integration-tests >>
+  version: 2
+  build-deploy:
     jobs:
-      - integration-test-for-orb
-  publish-dev:
-    unless: << pipeline.parameters.run-integration-tests >>
-    jobs:
-      - publish-dev-orb
-      - trigger-integration-test-workflow:
+      - build
+      - deploy:
           requires:
-            - publish-dev-orb
+            - build
+          filters:
+            branches:
+              only: jekyll-sample
