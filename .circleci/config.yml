@@ -1,16 +1,9 @@
 version: 2.1
 
-jobs:
-  deploy:
-    docker:
-      - image: busybox
-    steps:
-      - checkout
-      - deploy:
-          command: echo "deploy"
+orbs:
+  hello: circleci/hello-build@0.0.14
 
 workflows:
-  version: 2
-  workflow:
+  Hello Workflow:
     jobs:
-      - deploy
+      - hello/hello-build
