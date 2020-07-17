@@ -1,16 +1,17 @@
 version: 2.1
-
 jobs:
-  deploy:
-    docker:
-      - image: busybox
+  build:
+    machine: true
     steps:
       - checkout
-      - deploy:
-          command: echo "deploy"
+      - when:
+          condition:
+            - not:
+              - equal: [ development, $CIRCLE_BRANCH ]
+          steps:
+            - run: echo "deploy"
 
 workflows:
-  version: 2
-  workflow:
+  main:
     jobs:
-      - deploy
+      - build
