@@ -1,13 +1,20 @@
-version: 2
+version: 2.1
+
+parameters:
+  run-deploy:
+    type: boolean
+    default: true
+
 jobs:
-  build:
+  deploy_job:
     machine: true
     steps:
       - checkout
       - when:
           condition:
-            - not:
-              - equal: [ development, $CIRCLE_BRANCH ]
+            or:
+              - << pipeline.parameters.run-deploy >>
+              - equal: [ master, << pipeline.git.branch >> ]
           steps:
             - run: echo "deploy"
 
@@ -15,4 +22,4 @@ workflows:
   version: 2
   main:
     jobs:
-      - build
+      - deploy_job
