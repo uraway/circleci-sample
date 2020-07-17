@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   run-deploy:
     type: boolean
-    default: true
+    default: false
 
 jobs:
   deploy_job:
