@@ -6,25 +6,28 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker -v
+      - restore_cache:
+          keys:
+          - v1-image-{{ .Branch }}
+          - v1-image-
       - run:
-          name: Docker Hubへログイン
-          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-      - run:
-          name: 環境変数REGISTORY_URLの設定
+          name: イメージの.tarキャッシュがあればロード
           command: |
-            echo 'export REGISTORY_URL=${DOCKER_USER}/${CIRCLE_PROJECT_REPONAME}' >> $BASH_ENV
-            echo ${REGISTORY_URL}
-      - run:
-          name: 指定イメージのpull
-          command: docker pull ${REGISTORY_URL}:latest
-      - run: docker images
+            set +o pipefail
+            docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
       - run:
           name: イメージのビルド
-          command: docker build -t ${REGISTORY_URL} --cache-from ${REGISTORY_URL}:latest .
+          command: |
+            docker build --cache-from=${CIRCLE_PROJECT_REPONAME}:latest -t ${CIRCLE_PROJECT_REPONAME} .
       - run:
-          name: ビルドしたイメージはそのままpushが可能
-          command: docker push ${REGISTORY_URL}
+          name: イメージのレイヤを.tarにまとめて保存
+          command: |
+            mkdir -p ~/caches
+            docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
+      - save_cache:
+          key: v1-image-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ~/caches
 
 workflows:
     version: 2
