@@ -6,20 +6,20 @@ parameters:
     default: false
 
 jobs:
-  deploy_job:
+  test:
     machine: true
     steps:
       - checkout
-      - when:
-          condition:
-            or:
-              - << pipeline.parameters.run-deploy >>
-              - equal: [ master, << pipeline.git.branch >> ]
-          steps:
-            - run: echo "deploy"
 
-workflows:
-  version: 2
-  main:
-    jobs:
-      - deploy_job
+  build:
+    machine: true
+    steps:
+      - checkout
+
+  deploy:
+    machine: true
+    steps:
+      - checkout
+
+
+
