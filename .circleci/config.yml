@@ -1,12 +1,28 @@
 version: 2.1
-executors:
-  # my-executorを定義
-  my-executor:
-    docker:
-      - image: cimg/ruby:2.7.1-node
+
 jobs:
   build:
-    executor:
-      name: my-executor
+    machine: true
     steps:
-      - run: echo Hello World
+      - run: echo "hello world" >> /tmp/dir/foo
+      - persist_to_workspace:
+          root: /tmp/dir
+          paths:
+            - foo
+
+  deploy:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: cat foo
+      - run: cat /tmp/dir/foo
+
+workflows:
+  main:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+
