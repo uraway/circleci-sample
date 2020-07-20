@@ -1,29 +1,51 @@
 version: 2.1
 
 jobs:
-  build:
+  install_deps:
     machine: true
     steps:
-      - run: mkdir -p /tmp/dir/ && touch /tmp/dir/foo
-      - run: echo "hello world" >> /tmp/dir/foo
+      - run: echo "install_deps" >> foo.bin
       - persist_to_workspace:
-          root: /tmp/dir
+          root: .
           paths:
-            - foo
+            - foo.bin
+
+  test_1:
+    machine: true
+    steps:
+      - run: echo "test_1" >> foo.bin
+      - persist_to_workspace:
+          root: .
+          paths:
+            - foo.bin
+
+  test_2:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: .
+      - run: cat foo.bin
 
   deploy:
     machine: true
     steps:
       - attach_workspace:
-          at: ./
-      - run: cat foo
-      - run: cat /tmp/dir/foo
+          at: .
+      - run: cat foo.bin
 
 workflows:
-  main:
+  version: 2
+  workflow:
     jobs:
-      - build
-      - deploy:
+      - install_deps # ジョブA
+      - test_1:      # ジョブB
           requires:
-            - build
+            - install_deps
+      - test_2:      # ジョブC
+          requires:
+            - install_deps
+      - deploy:      # ジョブD
+          requires:
+            - test_1
+            - test_2
 
