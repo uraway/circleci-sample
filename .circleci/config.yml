@@ -36,7 +36,7 @@ jobs:
           # 次のコマンドは失敗する
           # curl --retry 10 --retry-connrefused http://localhost:3000
           # 次のコマンドは成功する
-          docker exec circleci-sample curl --retry 10 --retry-connrefused http://localhost:3000
+          docker exec circleci-sample curl http://localhost:3000
 
 workflows:
     version: 2
