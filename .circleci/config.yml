@@ -4,7 +4,7 @@ jobs:
   build:
     machine: true
     steps:
-      - run: touch /tmp/dir/foo
+      - run: mkdir -p /tmp/dir/ && touch /tmp/dir/foo
       - run: echo "hello world" >> /tmp/dir/foo
       - persist_to_workspace:
           root: /tmp/dir
