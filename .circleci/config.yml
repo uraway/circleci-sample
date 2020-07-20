@@ -1,15 +1,12 @@
 version: 2.1
-
-parameters:
-  run-deploy:
-    type: boolean
-    default: false
-
+executors:
+  # my-executorを定義
+  my-executor:
+    docker:
+      - image: cimg/ruby:2.7.1-node
 jobs:
-  deploy:
-    machine: true
+  build:
+    executor:
+      name: my-executor
     steps:
-      - checkout
-
-
-
+      - run: echo Hello World
