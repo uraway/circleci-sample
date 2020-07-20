@@ -5,6 +5,7 @@ jobs:
     docker:
       - image: cimg/ruby:2.6.5-node
     steps:
+      - run: yarn -v
       - run:
           name: Nodeをインストール
           environment:
