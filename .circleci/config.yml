@@ -6,16 +6,6 @@ parameters:
     default: false
 
 jobs:
-  test:
-    machine: true
-    steps:
-      - checkout
-
-  build:
-    machine: true
-    steps:
-      - checkout
-
   deploy:
     machine: true
     steps:
