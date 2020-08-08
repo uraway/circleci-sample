@@ -1,45 +1,16 @@
 version: 2.1
-jobs:
-  build_and_push:
-    docker:
-      - image: circleci/ruby:2.6.5-node
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run: docker -v
-      - restore_cache:
-          keys:
-          - v1-image-{{ .Branch }}
-          - v1-image-
-      - run:
-          name: イメージの.tarキャッシュがあればロード
-          command: |
-            set +o pipefail
-            docker load -i ~/caches/${CIRCLE_PROJECT_REPONAME}.tar | true
-      - run:
-          name: イメージのビルド
-          command: |
-            docker build --cache-from=${CIRCLE_PROJECT_REPONAME}:latest -t ${CIRCLE_PROJECT_REPONAME} .
-      - run:
-          name: イメージのレイヤを.tarにまとめて保存
-          command: |
-            mkdir -p ~/caches
-            docker save -o ~/caches/${CIRCLE_PROJECT_REPONAME}.tar ${CIRCLE_PROJECT_REPONAME}
-      - save_cache:
-          key: v1-image-{{ .Branch }}-{{ epoch }}
-          paths:
-            - ~/caches
 
-      - run: |
-          docker run -d --name circleci-sample -p 3000:3000 circleci-sample
-          sleep 10
-          # 次のコマンドは失敗する
-          # curl --retry 10 --retry-connrefused http://localhost:3000
-          # 次のコマンドは成功する
-          docker exec circleci-sample curl http://localhost:3000
+jobs:
+  build:
+    docker:
+      - image: busybox
+    environment:
+      CIRCLE_COMPARE_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<<pipeline.git.revision>>
+    steps:
+      - run: echo $CIRCLE_COMPARE_URL
 
 workflows:
-    version: 2
-    main:
-      jobs:
-        - build_and_push
+  version: 2
+  workflow:
+    jobs:
+      - build
