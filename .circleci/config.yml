@@ -9,13 +9,13 @@ parameters:
 jobs:
   build:
     docker:
-      - image: cimg/python:3.7-<< pipeline.parameters.node >>
+      - image: circleci/python:3.7-<< pipeline.parameters.node >>
     steps:
       - run: echo << pipeline.parameters.node >>
 
   test:
     docker:
-      - image: cimg/python:3.7-<< pipeline.parameters.node >>
+      - image: circleci/python:3.7-<< pipeline.parameters.node >>
     steps:
       - run: echo << pipeline.parameters.node >>
 
