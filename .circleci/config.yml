@@ -1,52 +1,22 @@
 version: 2.1
+commands:
+  run-tests:
+    parameters:
+      your-test:
+        type: steps
+        default: []
+    steps:
+    - run: mkdir -p ./test-results
+    - steps: << parameters.your-test >>
+    - store_test_results:
+        path: ./test-results
 
 jobs:
-  install_deps:
+  build:
     docker:
-      - image: busybox
+      - image: cimg/ruby:2.7
     steps:
-      - run: echo "install_deps"
-
-  test_1:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  deploy:
-    docker:
-      - image: busybox
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
-
-workflows:
-  version: 2
-  workflow:
-    jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
-          requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+    - run-tests:
+        your-test:
+          - run: bundle exec rubocop
+          - run: bundle exec rspec
