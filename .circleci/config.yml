@@ -1,52 +1,26 @@
 version: 2.1
-
 jobs:
-  install_deps:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "install_deps"
-
-  test_1:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
+  test:
+   parallelism: 4
+   docker:
+     - image: busybox
+   steps:
+     - run: echo "テスト"
   deploy:
-    docker:
-      - image: busybox
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
+   docker:
+     - image: busybox
+   steps:
+     - run: echo "デプロイ"
 
 workflows:
   version: 2
-  workflow:
+  test_deploy:
     jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
+      - test
+      - deploy:
+          filters:
+            branches:
+              only:
+               - master
           requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+            - test
