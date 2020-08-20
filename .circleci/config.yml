@@ -1,52 +1,36 @@
 version: 2.1
 
+parameters:
+  run-integration-tests:
+    type: boolean
+    default: false
+
 jobs:
-  install_deps:
+  test:
     docker:
-      - image: busybox
+      - image: cimg/python:3.7
     steps:
-      - run: echo "install_deps"
+      - run: echo "インテグレーションテスト"
 
-  test_1:
+  trigger:
     docker:
-      - image: busybox
+      - image: cimg/python:3.7
     steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  deploy:
-    docker:
-      - image: busybox
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
+      - run:
+          name: integration-testワークフローをトリガする
+          command: |
+            curl -u ${CIRCLE_TOKEN}: -X POST --header "Content-Type: application/json" -d '{
+              "parameters": {
+                "run-integration-tests": "true"
+              }
+            }' https://circleci.com/api/v2/project/<< pipeline.project.type >>/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline
 
 workflows:
-  version: 2
-  workflow:
+  integration-test:
+    when: << pipeline.parameters.run-integration-tests >> # run-integration-testsがtrueであるときワークフローは実行される
     jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
-          requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+      - test
+  trigger-integration-test:
+    unless: << pipeline.parameters.run-integration-tests >> # run-integration-testsがfalseであるときワークフローは実行される
+    jobs:
+      - trigger
