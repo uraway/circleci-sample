@@ -1,52 +1,26 @@
 version: 2.1
 
+parameters:
+  node:
+    type: enum
+    enum: ["node", "node-browsers", "node-browsers-legacy"]
+    default: node
+
 jobs:
-  install_deps:
+  build:
     docker:
-      - image: busybox
+      - image: cimg/python:3.7-<< pipeline.parameters.node >>
     steps:
-      - run: echo "install_deps"
+      - run: echo << pipeline.parameters.node >>
 
-  test_1:
+  test:
     docker:
-      - image: busybox
+      - image: cimg/python:3.7-<< pipeline.parameters.node >>
     steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  deploy:
-    docker:
-      - image: busybox
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
+      - run: echo << pipeline.parameters.node >>
 
 workflows:
-  version: 2
   workflow:
     jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
-          requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+      - build
+      - test
