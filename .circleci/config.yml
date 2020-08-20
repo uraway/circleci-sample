@@ -1,52 +1,19 @@
 version: 2.1
 
 jobs:
-  install_deps:
+  copy-to-s3:
     docker:
-      - image: busybox
+      - image: cimg/python:3.8
+    parameters:
+      bucket-name:
+        description: バケット名
+        type: string
+        default: my-bucket
     steps:
-      - run: echo "install_deps"
-
-  test_1:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  deploy:
-    docker:
-      - image: busybox
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
+      - run: aws s3 cp file.txt s3://<< parameters.bucket-name >>/
 
 workflows:
-  version: 2
-  workflow:
+  main:
     jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
-          requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+      - copy-to-s3:
+          bucket-name: "123"
