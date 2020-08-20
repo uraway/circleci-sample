@@ -1,52 +1,27 @@
 version: 2.1
 
 jobs:
-  install_deps:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "install_deps"
+  build:
+    machine: true
+    parameters:
+      aws-access-key-id:
+        type: env_var_name
+      aws-secret-access-key:
+        type: env_var_name
 
-  test_1:
-    docker:
-      - image: busybox
     steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  deploy:
-    docker:
-      - image: busybox
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
+      - run:
+          name: Configure AWS Access Key ID
+          command: |
+            aws configure set aws_access_key_id $<<parameters.aws-access-key-id>>
+      - run:
+          name: Configure AWS Secret Access Key
+          command: |
+            aws configure set aws_secret_access_key $<<parameters.aws-secret-access-key>>
 
 workflows:
-  version: 2
   workflow:
     jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
-          requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+    - build:
+        aws-access-key-id: AWS_ACCESS_KEY_ID
+        aws-secret-access-key: AWS_SECRET_ACCESS_KEY
