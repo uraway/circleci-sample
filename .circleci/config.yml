@@ -1,52 +1,20 @@
 version: 2.1
 
 jobs:
-  install_deps:
+  build:
     docker:
       - image: busybox
     steps:
-      - run: echo "install_deps"
-
-  test_1:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_1" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  test_2:
-    docker:
-      - image: busybox
-    steps:
-      - run: echo "test_2" > foo.bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - foo.bin
-
-  deploy:
-    docker:
-      - image: busybox
-    steps:
-      - attach_workspace:
-          at: .
-      - run: cat foo.bin
+      - run: |
+          docker run -d --name circleci-sample -p 3000:3000 circleci-sample
+          sleep 10
+          # 次のコマンドは失敗する
+          # curl --retry 10 --retry-connrefused http://localhost:3000
+          # 次のコマンドは成功する
+          docker exec circleci-sample curl --retry 10 --retry-connrefused http://localhost:3000
 
 workflows:
   version: 2
   workflow:
     jobs:
-      - install_deps # ジョブA
-      - test_1:      # ジョブB
-          requires:
-            - install_deps
-      - test_2:      # ジョブC
-          requires:
-            - install_deps
-      - deploy:      # ジョブD
-          requires:
-            - test_1
-            - test_2
+      - build
