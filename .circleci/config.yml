@@ -10,7 +10,7 @@ jobs:
           name: sample/hello_world.txtファイルの作成
           command: mkdir -p sample && touch sample/hello_world.txt
       - run:
-          name: name: docker cpしてリモートDocker環境にフォルダのマウント
+          name: docker cpしてリモートDocker環境にフォルダのマウント
           command: |
              docker container create --name tmp -v /sample busybox
              docker cp ./sample/. tmp:/sample
